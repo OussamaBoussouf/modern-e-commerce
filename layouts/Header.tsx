@@ -72,9 +72,9 @@ function Header() {
       </div>
       {/* MOBILE VERSION */}
       <div
-        className={`bg-gray-200 h-svh w-full ${
+        className={`bg-gray-200 h-vh w-full ${
           isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
-        } duration-700 transition-['transform'] ease-in-out inset-0 absolute p-2`}
+        } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
       >
         <Button variant="outline" onClick={() => setIsOpen(false)}>
           <X />
