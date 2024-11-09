@@ -66,6 +66,10 @@
 }
 
 @layer utilities {
+  .black-gradient {
+    background-image: linear-gradient(to top, black 30%, #2e2e2e 70%);
+  }
+  
   .styled-scrollbar::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -84,3 +88,4 @@
     background-color: #555;
   }
 }
+
