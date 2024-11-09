@@ -24,9 +24,9 @@ function SearchPreview({ searchedValue, isVisible }: { searchedValue: string, is
               key={product.id}
               className="py-2 cursor-pointer hover:bg-gray-100"
             >
-              <div className="flex items-center justify-between gap-16 px-3 lg:px-6">
+              <div className="flex items-center justify-between px-3 lg:px-6">
                 {/* IMAGE */}
-                <div className="inline-flex items-center flex-grow">
+                <div className="inline-flex items-center w-[280px]">
                   <Image
                     src={product.image}
                     width={60}
