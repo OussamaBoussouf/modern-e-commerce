@@ -1,13 +1,17 @@
 import { products } from "@/db/products";
 import Image from "next/image";
+import Link from "next/link";
 
-function SearchPreview({ searchedValue, isVisible }: { searchedValue: string, isVisible: boolean }) {
-    
+function SearchPreview({
+  searchedValue,
+  isVisible,
+}: {
+  searchedValue: string;
+  isVisible: boolean;
+}) {
   const filteredProducts = products.filter((product) =>
     product.name.toLowerCase().includes(searchedValue.toLowerCase())
   );
-
-
 
   return (
     <div
@@ -20,26 +24,24 @@ function SearchPreview({ searchedValue, isVisible }: { searchedValue: string, is
       {filteredProducts.length !== 0 ? (
         <ul className="divide-y">
           {filteredProducts.map((product) => (
-            <li
-              key={product.id}
-              className="py-2 cursor-pointer hover:bg-gray-100"
-            >
-              <div className="flex items-center justify-between px-3 lg:px-6">
-                {/* IMAGE */}
-                <div className="inline-flex items-center w-[280px]">
-                  <Image
-                    src={product.image}
-                    width={60}
-                    height={60}
-                    alt={product.name}
-                    className="w-auto h-auto"
-                  />
-                  <p className="ms-4 text-sm">
-                    {product.name}
-                  </p>
-                </div>
-                {/* RATING */}
-                <div className="hidden lg:inline-flex lg:items-center gap-1">
+            <Link key={product.id} href={`/product/1/${product.name}`}>
+              <li
+                className="py-2 cursor-pointer hover:bg-gray-100"
+              >
+                <div className="flex items-center justify-between px-3 lg:px-6">
+                  {/* IMAGE */}
+                  <div className="inline-flex items-center w-[280px]">
+                    <Image
+                      src={product.image}
+                      width={60}
+                      height={60}
+                      alt={product.name}
+                      className="w-auto h-auto"
+                    />
+                    <p className="ms-4 text-sm">{product.name}</p>
+                  </div>
+                  {/* RATING */}
+                  <div className="hidden lg:inline-flex lg:items-center gap-1">
                     <svg
                       fill="orange"
                       viewBox="-2 -2 24 24"
@@ -61,12 +63,13 @@ function SearchPreview({ searchedValue, isVisible }: { searchedValue: string, is
                       </g>
                     </svg>
                     <span>{product.rate}.0</span>
+                  </div>
+                  <span className="font-semibold text-sm lg:text-base">
+                    ${product.price}
+                  </span>
                 </div>
-                <span className="font-semibold text-sm lg:text-base">
-                  ${product.price}
-                </span>
-              </div>
-            </li>
+              </li>
+            </Link>
           ))}
         </ul>
       ) : (
