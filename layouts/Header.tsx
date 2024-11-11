@@ -7,8 +7,8 @@ import Link from "next/link";
 import { useState } from "react";
 
 const links = [
-  { href: "/home", label: "Home" },
-  { href: "/all_products", label: "All products" },
+  { href: "/", label: "Home" },
+  { href: "/products", label: "All products" },
 ];
 
 function Header() {

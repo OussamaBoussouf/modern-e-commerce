@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import {inter} from "@/app/ui/fonts";
+import { inter } from "@/app/ui/fonts";
 import "../styles/globals.css";
 import Header from "@/layouts/Header";
-
+import Footer from "@/layouts/Footer";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,11 +16,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased`}
-      >
-        <Header/>
-        {children}
+      <body className={`${inter.className} antialiased`}>
+        <Header />
+        <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );
