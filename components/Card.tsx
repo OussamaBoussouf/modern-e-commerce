@@ -1,5 +1,6 @@
 import Image, { StaticImageData } from "next/image";
 import { Button } from "./ui/button";
+import Link from "next/link";
 
 type CardProps = {
   image: StaticImageData;
@@ -9,18 +10,19 @@ type CardProps = {
 };
 
 function Card({ image, name, price, rate }: CardProps) {
-
   return (
     <div className="max-w-[350px]">
       {/* IMAGE */}
       <div className="bg-gray-200 rounded-lg">
-        <Image
-          src={image}
-          width="350"
-          height="350"
-          alt={name}
-          className="w-[350px] h-auto"
-        />
+        <Link href={`/product/1/${name}`}>
+          <Image
+            src={image}
+            width="350"
+            height="350"
+            alt={name}
+            className="w-[350px] h-auto"
+          />
+        </Link>
       </div>
       {/* CONTENT */}
       <div className="mt-2 flex flex-col gap-2">
@@ -51,13 +53,15 @@ function Card({ image, name, price, rate }: CardProps) {
           </div>
           <span className="font-bold">${price}</span>
         </div>
-      <p className="text-sm text-gray-500">
-        A perfect balance of high-fidelity audio
-      </p>
+        <p className="text-sm text-gray-500">
+          A perfect balance of high-fidelity audio
+        </p>
       </div>
       {/* GROUP BUTTON */}
       <div className="flex flex-col sm:flex-row sm:items-center mt-4 gap-2">
-        <Button variant="outline" className="flex-grow">Add to Cart</Button>
+        <Button variant="outline" className="flex-grow">
+          Add to Cart
+        </Button>
         <Button className="flex-grow">Buy Now</Button>
       </div>
     </div>
