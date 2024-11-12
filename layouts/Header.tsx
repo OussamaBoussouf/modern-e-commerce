@@ -43,20 +43,18 @@ function Header() {
           </div>
           <div className="hidden md:block flex-grow">
             <div className="relative max-w-[700px] mx-auto">
-             <SearchProduct/>
+              <SearchProduct />
             </div>
           </div>
           <ul className="items-center gap-5 hidden md:flex">
             <li>
               <Link href="#" className="inline-flex items-end gap-2">
                 <UserRound />
-                <span className="text-sm">Account</span>
               </Link>
             </li>
             <li>
-              <Link href="#" className="inline-flex items-end gap-2">
+              <Link href="/cart" className="inline-flex items-end gap-2">
                 <ShoppingCart />
-                <span className="text-sm">Cart</span>
               </Link>
             </li>
           </ul>
