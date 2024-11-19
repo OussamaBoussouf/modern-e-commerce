@@ -2,8 +2,10 @@
 
 import SearchProduct from "@/components/SearchProduct";
 import { Button } from "@/components/ui/button";
+import { useSearchQuery } from "@/hooks/useSearchQuery";
 import { Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -42,7 +44,7 @@ function Header() {
             </nav>
           </div>
           <div className="hidden md:block flex-grow">
-            <div className="relative max-w-[700px] mx-auto">
+            <div className="relative max-w-[500px] mx-auto">
               <SearchProduct />
             </div>
           </div>
@@ -69,7 +71,7 @@ function Header() {
         </div>
       </div>
       {/* MOBILE VERSION */}
-      <div
+      {/* <div
         className={`bg-gray-200 h-vh w-full ${
           isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
         } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
@@ -98,9 +100,74 @@ function Header() {
             <Link href="#">Cart</Link>
           </li>
         </ul>
-      </div>
+      </div> */}
+      <MobileNavigation isOpen={isOpen} handleClose={() => setIsOpen(false)} />
     </header>
   );
 }
 
 export default Header;
+
+function MobileNavigation({
+  isOpen,
+  handleClose,
+}: {
+  isOpen: boolean;
+  handleClose: () => void;
+}) {
+  const [searchValue, setSearchValue] = useState("");
+  const { setQueryString } = useSearchQuery();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  return (
+    <div
+      className={`bg-gray-200 h-vh w-full ${
+        isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
+      } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
+    >
+      <Button variant="outline" onClick={handleClose}>
+        <X />
+      </Button>
+      <ul className="my-5 space-y-5">
+        <li className="relative max-w-[700px] mx-auto">
+          <input
+            className=" w-full text-sm rounded-lg py-2 ps-4 pe-8"
+            type="text"
+            placeholder="Search Product"
+            name="search"
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            onKeyUp={(e) => {
+              if (e.key === "Enter") {
+                if (pathname !== "/products") {
+                  router.push(`/products?search=${searchValue}`);
+                }
+                else{
+                  setQueryString('search', searchValue);
+                }
+                handleClose();
+              }
+            }}
+          />
+          <Search
+            size="15"
+            color="black"
+            className="absolute right-3 top-1/2 -translate-y-1/2"
+          />
+        </li>
+        <li>
+          <Link href="/account" onClick={handleClose}>
+            Account
+          </Link>
+        </li>
+        <li>
+          <Link href="/cart" onClick={handleClose}>
+            Cart
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
