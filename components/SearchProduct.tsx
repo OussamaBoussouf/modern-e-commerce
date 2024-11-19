@@ -29,6 +29,7 @@ function SearchProduct() {
         type="text"
         placeholder="Search Product"
         name="search"
+        value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
       />
       <Search
@@ -36,7 +37,11 @@ function SearchProduct() {
         color="black"
         className="absolute right-3 top-1/2 -translate-y-1/2"
       />
-      <SearchPreview searchedValue={debouncedSearch} isVisible={isVisible} />
+      <SearchPreview
+        searchedValue={debouncedSearch}
+        isVisible={isVisible}
+        setIsVisible={() => setIsVisible(false)}
+      />
     </div>
   );
 }

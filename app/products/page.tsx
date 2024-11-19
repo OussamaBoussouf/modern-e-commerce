@@ -1,27 +1,67 @@
-import SortBy from "@/components/SortBy";
-import Products from "@/containers/all-products/Products";
-import SideBarFilter from "@/containers/all-products/SideBarFilter";
+// "use client";
 
-function ProductsPage() {
+import Card from "@/components/Card";
+import PaginationComponent from "@/components/Pagination";
+import { Product } from "@/lib/types";
+import { CircleX } from "lucide-react";
+
+async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: {
+    sort?: string;
+    price?: string;
+    category?: string;
+    page?: string;
+    search?: string;
+  };
+}) {
+  const res = await fetch("http://localhost:3000/api/products", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      sort: searchParams.sort,
+      price: searchParams.price,
+      category: searchParams.category,
+      page: searchParams.page,
+      search: searchParams.search
+    }),
+    cache: "no-store",
+  });
+
+  if (!res.ok) throw new Error("Something went wrong");
+
+  const { products, pageInfo } = await res.json();
+
+
+  if(products.length === 0){
+    return(
+      <div className="rounded-lg w-full flex flex-col gap-1 justify-center items-center h-96 bg-slate-100">
+          <CircleX size={30} color="red"/>
+          <p className="text-2xl">No products found</p>
+          <p className="text-gray-400">We found no search results for these filters.</p>
+      </div>
+    )
+  }
+
   return (
     <>
-      <section className="h-[400px] relative w-full bg-fixed bg-cover  bg-no-repeat bg-center bg-[url('../assets/images/headphone-product.jpg')]">
-        <h2 className="absolute drop-shadow-2xl top-1/2 left-1/2 -translate-y-1/2 -translate-x-1/2 text-9xl md:text-[12rem] tracking-wider text-white font-bold">
-          Shop
-        </h2>
-      </section>
-      <section className="container mx-auto py-10 px-3">
-        <div className="border-b-[1px] pb-6 flex justify-between items-center">
-          <h2 className="text-3xl font-bold">
-            Give All You Need
-          </h2>
-          <SortBy />
-        </div>
-        <div className="flex flex-col md:flex-row gap-x-8 py-10">
-          <SideBarFilter />
-          <Products />
-        </div>
-      </section>
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
+        {products?.map((product: Omit<Product, "stock" | "subImages">) => (
+          <Card
+            key={product.id}
+            image={product.image}
+            name={product.name}
+            price={product.price}
+            rate={product.rating}
+            description={product.description}
+            id={product.id}
+          />
+        ))}
+      </div>
+      {pageInfo ? <PaginationComponent pageInfo={pageInfo} /> : null}
     </>
   );
 }

@@ -1,15 +1,35 @@
-import { products } from "@/db/products";
+import { Product } from "@/lib/types";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 function SearchPreview({
   searchedValue,
   isVisible,
+  setIsVisible
 }: {
   searchedValue: string;
   isVisible: boolean;
+  setIsVisible: () => void
 }) {
-  const filteredProducts = products.filter((product) =>
+
+  const [products , setProducts] = useState<Product[] | []>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const res = await fetch(`/api/products`);
+        const {products} = await res.json();
+        setProducts(products);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  const filteredProducts : Product[] | [] = products?.filter((product : Product) =>
     product.name.toLowerCase().includes(searchedValue.toLowerCase())
   );
 
@@ -24,7 +44,7 @@ function SearchPreview({
       {filteredProducts.length !== 0 ? (
         <ul className="divide-y">
           {filteredProducts.map((product) => (
-            <Link key={product.id} href={`/product/1/${product.name}`}>
+            <Link key={product.id} href={`/product/${product.id}`} onClick={setIsVisible}>
               <li
                 className="py-2 cursor-pointer hover:bg-gray-100"
               >
@@ -62,7 +82,7 @@ function SearchPreview({
                         <path d="M10 16.207l-6.173 3.246 1.179-6.874L.01 7.71l6.902-1.003L10 .453l3.087 6.254 6.902 1.003-4.995 4.869 1.18 6.874z"></path>
                       </g>
                     </svg>
-                    <span>{product.rate}.0</span>
+                    <span>{product.rating}</span>
                   </div>
                   <span className="font-semibold text-sm lg:text-base">
                     ${product.price}

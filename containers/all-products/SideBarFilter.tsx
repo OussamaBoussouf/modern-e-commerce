@@ -8,19 +8,43 @@ import {
 } from "@/components/ui/accordion";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSearchQuery } from "@/hooks/useSearchQuery";
+import { useSearchParams } from "next/navigation";
+import { useDebounce } from "@/hooks/useDebounce";
 
 const CATEGORIES = [
-  "all",
-  "wired headphones",
-  "wireless headphones",
-  "true wireless earbuds",
+  {
+    name: "All",
+    value: "",
+  },
+  {
+    name: "Wired headphones",
+    value: "wired",
+  },
+  {
+    name: "Wireless headphones",
+    value: "wireless",
+  },
+  {
+    name: "True wireless earbuds",
+    value: "earbuds",
+  },
 ];
 
 function SideBarFilter() {
-  const [maxPrice, setMaxPrice] = useState("100");
-  const {setQueryString} = useSearchQuery();
+  const { setQueryString } = useSearchQuery();
+  const searchParams = useSearchParams();
+
+  const selectedCategory = searchParams.get("category") ?? "";
+  const [price, setPrice] = useState(searchParams.get("price"));
+  const debouncedPriceValue = useDebounce(price, 500);
+
+  useEffect(() => {
+    if (price) {
+      setQueryString("price", price.toString());
+    }
+  }, [debouncedPriceValue]);
 
   return (
     <aside className="md:basis-1/3 lg:basis-1/5 mb-10 lg:mb-0">
@@ -32,13 +56,17 @@ function SideBarFilter() {
           <AccordionContent>
             <RadioGroup defaultValue="category" className="space-y-4 mt-2">
               {CATEGORIES.map((category) => (
-                <div key={category} className="flex items-center space-x-2">
+                <div
+                  key={category.name}
+                  className="flex items-center space-x-2"
+                >
                   <RadioGroupItem
-                    value={category}
-                    id={category}
-                    onClick={() => setQueryString("cateogry", category)}
+                    value={category.value}
+                    id={category.name}
+                    checked={selectedCategory == category.value && true}
+                    onClick={() => setQueryString("category", category.value)}
                   />
-                  <Label htmlFor={category}>{category}</Label>
+                  <Label htmlFor={category.name}>{category.name}</Label>
                 </div>
               ))}
             </RadioGroup>
@@ -47,17 +75,16 @@ function SideBarFilter() {
         <AccordionItem value="item-2">
           <AccordionTrigger className="font-semibold">Price</AccordionTrigger>
           <AccordionContent className="my-1">
-            <span className="block mb-2">$0 - ${maxPrice}</span>
+            <span className="block mb-2">$0 - ${price ?? 100}</span>
             <input
               className="w-full"
               type="range"
               min="0"
-              max="100"
-              step="5"
-              value={maxPrice}
+              max={100}
+              step={5}
+              value={price ?? 100}
               onChange={(e) => {
-                setMaxPrice(e.target.value);
-                setQueryString("price", e.target.value);
+                setPrice(e.target.value);
               }}
             />
           </AccordionContent>

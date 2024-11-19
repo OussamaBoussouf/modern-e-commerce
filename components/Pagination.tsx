@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import {
   Pagination,
@@ -10,31 +10,67 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useSearchQuery } from "@/hooks/useSearchQuery";
+import { useSearchParams } from "next/navigation";
+import { useMemo } from "react";
 
-function PaginationComponent() {
-  const {setQueryString} = useSearchQuery();
+function PaginationComponent({
+  pageInfo,
+}: {
+  pageInfo: {
+    pageCount: number;
+    next: number;
+    previous: number;
+  };
+}) {
+  const { setQueryString } = useSearchQuery();
+  const searchParams = useSearchParams();
+
+  const numberOfPages = useMemo(() => {
+    const pages = [];
+    for (let i = 1; i <= pageInfo.pageCount; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }, [pageInfo.pageCount]);
+
   return (
     <Pagination className="mt-10">
       <PaginationContent className="flex items-center justify-between w-full">
         <PaginationItem>
-          <PaginationPrevious href="#" />
+          <PaginationPrevious
+            className={`${
+              pageInfo.previous ? "cursor-pointer" : "opacity-20 pointer-events-none"
+            }`}
+            onClick={() =>
+              setQueryString(
+                "page",
+                pageInfo.previous === 1 ? "" : pageInfo.previous.toString()
+              )
+            }
+          />
         </PaginationItem>
         <div className="flex items-center">
-          <PaginationItem>
-            <PaginationLink className="cursor-pointer" onClick={() => setQueryString('page', '1')}>1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink className="cursor-pointer" onClick={() => setQueryString('page', '2')}>2</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink className="cursor-pointer" onClick={() => setQueryString('page', '3')}>3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
+          {numberOfPages.map((page) => (
+            <PaginationItem key={page}>
+              <PaginationLink
+                className="cursor-pointer"
+                isActive={parseInt(searchParams.get("page") || "1") === page}
+                onClick={() =>
+                  setQueryString("page", page === 1 ? "" : page.toString())
+                }
+              >
+                {page}
+              </PaginationLink>
+            </PaginationItem>
+          ))}
         </div>
         <PaginationItem>
-          <PaginationNext href="#" />
+          <PaginationNext
+            className={`${
+              pageInfo.next ? "cursor-pointer" : "opacity-20 pointer-events-none"
+            }`}
+            onClick={() => setQueryString("page", pageInfo.next.toString())}
+          />
         </PaginationItem>
       </PaginationContent>
     </Pagination>

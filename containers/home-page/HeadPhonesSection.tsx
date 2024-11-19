@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import ProductList from "./ProductList";
-import LoadingProduct from "./LoadingProduct";
+import LoadingProduct from "../../components/LoadingProduct";
 
 function HeadPhonesSection() {
   return (

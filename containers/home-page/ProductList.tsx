@@ -1,29 +1,24 @@
 import Card from "@/components/Card";
-import { products } from "@/db/products";
+import { Product } from "@/lib/types";
 
-async function getProducts() {
-    await new Promise<void>((resolve) => {
-        setTimeout(()=> {
-            resolve();
-        }, 2000)
-    })
-
-    return products;
-}
 
 async function ProductList() {
+  const res = await fetch("http://localhost:3000/api?collection=random-products");
+  if(!res.ok) throw new Error('Problem occured while fetching Products');
+  const {products} = await res.json();
 
- const data = await getProducts();
 
   return (
     <>
-      {data.map((product) => (
+      {products?.map((product : Omit<Product, 'subImages'>) => (
         <Card
           key={product.id}
           image={product.image}
           name={product.name}
           price={product.price}
-          rate={product.rate}
+          rate={product.rating}
+          description={product.description}
+          id={product.id}
         />
       ))}
     </>
