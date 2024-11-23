@@ -3,6 +3,7 @@ import { inter } from "@/app/ui/fonts";
 import "../styles/globals.css";
 import Header from "@/layouts/Header";
 import Footer from "@/layouts/Footer";
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body className={`${inter.className} antialiased`}>
         <Header />
         <main>{children}</main>
+        <Toaster />
         <Footer />
       </body>
     </html>

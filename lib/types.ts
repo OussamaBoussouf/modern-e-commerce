@@ -8,3 +8,10 @@ export type Product = {
   stock: number;
   subImages: { id: string; image: string; productId: string }[];
 };
+
+export type BasketProduct = Omit<
+  Product,
+  "subImages" | "description" | "rating" 
+> & {
+  quantity: number;
+};

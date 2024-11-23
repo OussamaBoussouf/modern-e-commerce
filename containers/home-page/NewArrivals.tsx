@@ -30,6 +30,7 @@ async function NewArrivals() {
                   price={product.price}
                   rate={product.rating}
                   id={product.id}
+                  stock={product.stock}
                   description={product.description}
                 />
               </CarouselItem>

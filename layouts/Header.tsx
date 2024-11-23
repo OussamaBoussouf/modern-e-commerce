@@ -1,11 +1,12 @@
-"use client";
+  "use client";
 
 import SearchProduct from "@/components/SearchProduct";
 import { Button } from "@/components/ui/button";
 import { useSearchQuery } from "@/hooks/useSearchQuery";
+import { useCart } from "@/store/useCart";
 import { Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 
 const links = [
@@ -15,6 +16,7 @@ const links = [
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const {basket} = useCart();
 
   return (
     <header>
@@ -54,10 +56,13 @@ function Header() {
                 <UserRound />
               </Link>
             </li>
-            <li>
+            <li className="relative">
               <Link href="/cart" className="inline-flex items-end gap-2">
                 <ShoppingCart />
               </Link>
+              <span className="absolute flex justify-center items-center w-5 h-5 -top-2 -right-2 rounded-full bg-black text-white text-[0.8rem]">
+                {basket.length ?? 0}
+              </span>
             </li>
           </ul>
           <Button
@@ -71,36 +76,6 @@ function Header() {
         </div>
       </div>
       {/* MOBILE VERSION */}
-      {/* <div
-        className={`bg-gray-200 h-vh w-full ${
-          isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
-        } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
-      >
-        <Button variant="outline" onClick={() => setIsOpen(false)}>
-          <X />
-        </Button>
-        <ul className="my-5 space-y-5">
-          <li className="relative max-w-[700px] mx-auto">
-            <input
-              className=" w-full text-sm rounded-lg py-2 ps-4 pe-8"
-              type="text"
-              placeholder="Search Product"
-              name="search"
-            />
-            <Search
-              size="15"
-              color="black"
-              className="absolute right-3 top-1/2 -translate-y-1/2"
-            />
-          </li>
-          <li>
-            <Link href="#">Account</Link>
-          </li>
-          <li>
-            <Link href="#">Cart</Link>
-          </li>
-        </ul>
-      </div> */}
       <MobileNavigation isOpen={isOpen} handleClose={() => setIsOpen(false)} />
     </header>
   );
@@ -119,7 +94,6 @@ function MobileNavigation({
   const { setQueryString } = useSearchQuery();
   const router = useRouter();
   const pathname = usePathname();
-  const searchParams = useSearchParams();
 
   return (
     <div
@@ -143,9 +117,8 @@ function MobileNavigation({
               if (e.key === "Enter") {
                 if (pathname !== "/products") {
                   router.push(`/products?search=${searchValue}`);
-                }
-                else{
-                  setQueryString('search', searchValue);
+                } else {
+                  setQueryString("search", searchValue);
                 }
                 handleClose();
               }
