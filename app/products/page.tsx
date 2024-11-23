@@ -49,7 +49,7 @@ async function ProductsPage({
   return (
     <>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
-        {products?.map((product: Omit<Product, "stock" | "subImages">) => (
+        {products?.map((product: Omit<Product, "subImages">) => (
           <Card
             key={product.id}
             image={product.image}
@@ -58,6 +58,7 @@ async function ProductsPage({
             rate={product.rating}
             description={product.description}
             id={product.id}
+            stock={product.stock}
           />
         ))}
       </div>

@@ -7,14 +7,19 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { products } from "@/db/products";
 import { Trash2 } from "lucide-react";
 import Image from "next/image";
 import { Button } from "./ui/button";
+import { useCart } from "@/store/useCart";
+import { formatPrice } from "@/lib/utils";
 
 function CartTable() {
+  const { basket, removeProduct, incrementProduct, decrementProduct } =
+    useCart();
+
+
   return (
-    <Table className="my-7">
+    <Table className="my-7 w-full">
       <TableHeader>
         <TableRow>
           <TableHead>PRODUCT</TableHead>
@@ -24,9 +29,9 @@ function CartTable() {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {products.slice(0, 4).map((product) => (
+        {basket.map((product) => (
           <TableRow key={product.id}>
-            <TableCell className="font-medium">
+            <TableCell className="font-medium w-1/4" >
               <Image
                 src={product.image}
                 width="80"
@@ -35,18 +40,35 @@ function CartTable() {
                 className="bg-gray-200 rounded-lg"
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="w-1/4">
               <div className="inline-flex items-center border rounded-lg p-1 w-fit">
-                <Button className="w-1 h-6">-</Button>
-                <span className="w-6 flex items-center justify-center">1</span>
-                <Button className="w-1 h-6">+</Button>
+                <Button
+                  className="w-1 h-6"
+                  onClick={() => decrementProduct(product.id)}
+                >
+                  -
+                </Button>
+                <span className="w-6 flex items-center justify-center">
+                  {product.quantity}
+                </span>
+                <Button
+                  disabled={product.quantity === product.stock}
+                  className="w-1 h-6"
+                  onClick={() => incrementProduct(product.id)}
+                >
+                  +
+                </Button>
               </div>
             </TableCell>
-            <TableCell className="font-bold text-md">
-              ${product.price}
+            <TableCell className="font-bold text-md w-1/4">
+              ${formatPrice(product.price * product.quantity)}
             </TableCell>
-            <TableCell className="text-right font-bold text-md">
-              <button className="inline-flex items-center gap-1" type="button">
+            <TableCell className="text-right font-bold text-md w-1/4">
+              <button
+                className="inline-flex items-center gap-1"
+                type="button"
+                onClick={() => removeProduct(product.id)}
+              >
                 <Trash2 size={17} />
                 Remove
               </button>

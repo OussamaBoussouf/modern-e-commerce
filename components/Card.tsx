@@ -1,7 +1,11 @@
-import Image, { StaticImageData } from "next/image";
+'use client'
+
+import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { summary } from "@/lib/utils";
+import { useCart } from "@/store/useCart";
+import { toast } from "@/hooks/use-toast";
 
 type CardProps = {
   id: string;
@@ -10,9 +14,18 @@ type CardProps = {
   price: number;
   rate: number;
   description: string;
+  stock: number
 };
 
-function Card({ image, name, description, price, rate, id }: CardProps) {
+function Card({ image, name, description, price, rate, id , stock}: CardProps) {
+
+  const {addToBasket} = useCart();
+
+  
+  const handleAddToBasket = () => {
+    const product = { image, name, price, stock, id, quantity: 1 }
+    addToBasket(id, product, toast);
+  };
   return (
     <div className="max-w-[350px]">
       {/* IMAGE */}
@@ -60,7 +73,7 @@ function Card({ image, name, description, price, rate, id }: CardProps) {
       </div>
       {/* GROUP BUTTON */}
       <div className="flex flex-col sm:flex-row sm:items-center mt-4 gap-2">
-        <Button variant="outline" className="flex-grow">
+        <Button variant="outline" className="flex-grow" onClick={handleAddToBasket}>
           Add to Cart
         </Button>
         <Button className="flex-grow">Buy Now</Button>

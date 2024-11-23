@@ -18,6 +18,7 @@ async function ProductList() {
           price={product.price}
           rate={product.rating}
           description={product.description}
+          stock={product.stock}
           id={product.id}
         />
       ))}

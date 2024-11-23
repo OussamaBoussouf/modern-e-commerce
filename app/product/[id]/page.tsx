@@ -4,12 +4,31 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Product } from "@/lib/types";
-
+import { useCart } from "@/store/useCart";
+import { pick } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 function SingleProductPage({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState< Product | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string | null>();
+
+  const { toast } = useToast();
+  const { addToBasket } = useCart();
+
+  const handleAddToBasket = (product: Product) => {
+    const newProductShape = pick(
+      { ...product, quantity },
+      "name",
+      "image",
+      "price",
+      "stock",
+      "quantity",
+      "id"
+    );
+    addToBasket(product.id, newProductShape, toast);
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -24,9 +43,8 @@ function SingleProductPage({ params }: { params: { id: string } }) {
     fetchData();
   }, []);
 
-
-  if(!product){
-    return <p>Loading...</p>
+  if (!product) {
+    return <p>Loading...</p>;
   }
 
   return (
@@ -47,9 +65,7 @@ function SingleProductPage({ params }: { params: { id: string } }) {
               width="200"
               height="200"
               className={`w-[24%] cursor-pointer h-auto bg-gray-100 rounded-lg ${
-                product?.image === selectedImage
-                  ? "border border-gray-500"
-                  : ""
+                product?.image === selectedImage ? "border border-gray-500" : ""
               }`}
               onClick={() => setSelectedImage(product?.image)}
             />
@@ -125,11 +141,18 @@ function SingleProductPage({ params }: { params: { id: string } }) {
               <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
             </div>
             <span>
-              Only <span className="text-orange-400">{product?.stock} Items</span> Left! Dont miss it</span>
+              Only{" "}
+              <span className="text-orange-400">{product?.stock} Items</span>{" "}
+              Left! Dont miss it
+            </span>
           </div>
           <div className="flex items-center gap-5 mt-3 h-12">
             <Button className="basis-1/2 h-full">Buy Now</Button>
-            <Button variant="outline" className="basis-1/2 h-full">
+            <Button
+              variant="outline"
+              className="basis-1/2 h-full"
+              onClick={() => handleAddToBasket(product)}
+            >
               Add to Cart
             </Button>
           </div>
