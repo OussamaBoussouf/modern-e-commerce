@@ -1,22 +1,32 @@
-  "use client";
+// "use client";
 
 import SearchProduct from "@/components/SearchProduct";
 import { Button } from "@/components/ui/button";
-import { useSearchQuery } from "@/hooks/useSearchQuery";
-import { useCart } from "@/store/useCart";
+// import { useSearchQuery } from "@/hooks/useSearchQuery";
+// import { useCart } from "@/store/useCart";
 import { Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+// import { usePathname, useRouter } from "next/navigation";
+// import { useState } from "react";
+import {
+  SignInButton,
+  SignedIn,
+  SignedOut,
+  UserButton,
+} from "@clerk/nextjs";
+import { getCart } from "@/lib/fetchers";
 
 const links = [
   { href: "/", label: "Home" },
   { href: "/products", label: "All products" },
 ];
 
-function Header() {
-  const [isOpen, setIsOpen] = useState(false);
-  const {basket} = useCart();
+async function Header() {
+  // const [isOpen, setIsOpen] = useState(false);
+  // const { basket } = useCart();
+
+  const cart = await getCart();
+  console.log(cart);
 
   return (
     <header>
@@ -50,18 +60,23 @@ function Header() {
               <SearchProduct />
             </div>
           </div>
-          <ul className="items-center gap-5 hidden md:flex">
-            <li>
-              <Link href="#" className="inline-flex items-end gap-2">
-                <UserRound />
-              </Link>
+          <ul className="gap-5 hidden md:flex md:items-center">
+            <li className="inline-flex items-center">
+              <SignedOut>
+                <SignInButton>
+                  <UserRound className="cursor-pointer"/>
+                </SignInButton>
+              </SignedOut>
+              <SignedIn>
+                <UserButton />
+              </SignedIn>
             </li>
             <li className="relative">
-              <Link href="/cart" className="inline-flex items-end gap-2">
+              <Link href="/cart" className="gap-2">
                 <ShoppingCart />
               </Link>
               <span className="absolute flex justify-center items-center w-5 h-5 -top-2 -right-2 rounded-full bg-black text-white text-[0.8rem]">
-                {basket.length ?? 0}
+                {cart?.length} 
               </span>
             </li>
           </ul>
@@ -69,78 +84,78 @@ function Header() {
             variant="outline"
             size="icon"
             className="md:hidden"
-            onClick={() => setIsOpen(true)}
+            // onClick={() => setIsOpen(true)}
           >
             <Menu />
           </Button>
         </div>
       </div>
       {/* MOBILE VERSION */}
-      <MobileNavigation isOpen={isOpen} handleClose={() => setIsOpen(false)} />
+      {/* <MobileNavigation isOpen={isOpen} handleClose={() => setIsOpen(false)} /> */}
     </header>
   );
 }
 
 export default Header;
 
-function MobileNavigation({
-  isOpen,
-  handleClose,
-}: {
-  isOpen: boolean;
-  handleClose: () => void;
-}) {
-  const [searchValue, setSearchValue] = useState("");
-  const { setQueryString } = useSearchQuery();
-  const router = useRouter();
-  const pathname = usePathname();
+// function MobileNavigation({
+//   isOpen,
+//   handleClose,
+// }: {
+//   isOpen: boolean;
+//   handleClose: () => void;
+// }) {
+//   const [searchValue, setSearchValue] = useState("");
+//   const { setQueryString } = useSearchQuery();
+//   const router = useRouter();
+//   const pathname = usePathname();
 
-  return (
-    <div
-      className={`bg-gray-200 h-vh w-full ${
-        isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
-      } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
-    >
-      <Button variant="outline" onClick={handleClose}>
-        <X />
-      </Button>
-      <ul className="my-5 space-y-5">
-        <li className="relative max-w-[700px] mx-auto">
-          <input
-            className=" w-full text-sm rounded-lg py-2 ps-4 pe-8"
-            type="text"
-            placeholder="Search Product"
-            name="search"
-            value={searchValue}
-            onChange={(e) => setSearchValue(e.target.value)}
-            onKeyUp={(e) => {
-              if (e.key === "Enter") {
-                if (pathname !== "/products") {
-                  router.push(`/products?search=${searchValue}`);
-                } else {
-                  setQueryString("search", searchValue);
-                }
-                handleClose();
-              }
-            }}
-          />
-          <Search
-            size="15"
-            color="black"
-            className="absolute right-3 top-1/2 -translate-y-1/2"
-          />
-        </li>
-        <li>
-          <Link href="/account" onClick={handleClose}>
-            Account
-          </Link>
-        </li>
-        <li>
-          <Link href="/cart" onClick={handleClose}>
-            Cart
-          </Link>
-        </li>
-      </ul>
-    </div>
-  );
-}
+//   return (
+//     <div
+//       className={`bg-gray-200 h-vh w-full ${
+//         isOpen ? "translate-x-[0%]" : "translate-x-[-100%]"
+//       } duration-700 transition-['transform'] ease-in-out inset-0 fixed z-50 p-2`}
+//     >
+//       <Button variant="outline" onClick={handleClose}>
+//         <X />
+//       </Button>
+//       <ul className="my-5 space-y-5">
+//         <li className="relative max-w-[700px] mx-auto">
+//           <input
+//             className=" w-full text-sm rounded-lg py-2 ps-4 pe-8"
+//             type="text"
+//             placeholder="Search Product"
+//             name="search"
+//             value={searchValue}
+//             onChange={(e) => setSearchValue(e.target.value)}
+//             onKeyUp={(e) => {
+//               if (e.key === "Enter") {
+//                 if (pathname !== "/products") {
+//                   router.push(`/products?search=${searchValue}`);
+//                 } else {
+//                   setQueryString("search", searchValue);
+//                 }
+//                 handleClose();
+//               }
+//             }}
+//           />
+//           <Search
+//             size="15"
+//             color="black"
+//             className="absolute right-3 top-1/2 -translate-y-1/2"
+//           />
+//         </li>
+//         <li>
+//           <Link href="/account" onClick={handleClose}>
+//             Account
+//           </Link>
+//         </li>
+//         <li>
+//           <Link href="/cart" onClick={handleClose}>
+//             Cart
+//           </Link>
+//         </li>
+//       </ul>
+//     </div>
+//   );
+// }

@@ -23,6 +23,7 @@ model Product {
   stock       Int
   category    String
   subImages   Image[]
+  users       Basket[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -32,4 +33,20 @@ model Image {
   image     String
   product   Product @relation(fields: [productId], references: [id])
   productId String
+}
+
+model User {
+  id       String   @id
+  email    String
+  products Basket[]
+}
+
+model Basket {
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  user      User    @relation(fields: [userId], references: [id])
+  userId    String
+  quantity  Int
+
+  @@id([productId, userId])
 }

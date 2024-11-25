@@ -8,9 +8,10 @@ import Link from "next/link";
 import { useCart } from "@/store/useCart";
 import { calculateTotal } from "@/lib/utils";
 
+
 function Cart() {
   const { basket } = useCart();
-
+  
   return (
     <section className="container mx-auto py-10 px-3 md:flex md:items-start gap-8">
       <div className="md:w-2/3">

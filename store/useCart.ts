@@ -1,6 +1,6 @@
 import { BasketProduct } from "@/lib/types";
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 
 type StoreState = {
@@ -97,7 +97,8 @@ export const useCart = create<CartStore>()(
         }),
     }),
     {
-      name: "basket-sotrage",
+      name: "basket-storage",
+      storage: createJSONStorage(() => cookiesStorage)
     }
   )
 );

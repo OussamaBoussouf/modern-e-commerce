@@ -4,6 +4,9 @@ import "../styles/globals.css";
 import Header from "@/layouts/Header";
 import Footer from "@/layouts/Footer";
 import { Toaster } from "@/components/ui/toaster";
+import {
+  ClerkProvider,
+} from "@clerk/nextjs";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -16,13 +19,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.className} antialiased`}>
-        <Header />
-        <main>{children}</main>
-        <Toaster />
-        <Footer />
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body className={`${inter.className} antialiased`}>
+          <Header />
+          <main>{children}</main>
+          <Toaster />
+          <Footer />
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

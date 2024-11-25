@@ -14,7 +14,7 @@ export function delay(time = 1000) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-//SUBSTRING A LONG TEXT
+//CREATE A SUMMARY FOR LONG TEXT
 export function summary(value: string, length: number) {
   if (value === null) {
     return;
@@ -35,7 +35,7 @@ export function pick(obj: Record<string, any>, ...props: any[]) {
   }, {});
 }
 
-//CALCULATE TOTAL PRICE OF PRODUCT
+//CALCULATE TOTAL PRICE OF CART ITEMS
 export function calculateTotal(products: BasketProduct[]) {
   let total = 0;
   for (const value of products) {
