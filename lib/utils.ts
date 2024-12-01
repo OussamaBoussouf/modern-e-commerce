@@ -1,7 +1,7 @@
 
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { BasketProduct } from "./types";
+import { BasketProduct, CartProduct } from "./types";
 
 
 
@@ -36,10 +36,10 @@ export function pick(obj: Record<string, any>, ...props: any[]) {
 }
 
 //CALCULATE TOTAL PRICE OF CART ITEMS
-export function calculateTotal(products: BasketProduct[]) {
+export function calculateTotal(products: CartProduct[]) {
   let total = 0;
   for (const value of products) {
-    total += value.price * value.quantity;
+    total += value.product.price * value.quantity;
   }
   return total.toFixed(2);
 }

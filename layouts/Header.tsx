@@ -1,20 +1,13 @@
-// "use client";
-
 import SearchProduct from "@/components/SearchProduct";
 import { Button } from "@/components/ui/button";
-// import { useSearchQuery } from "@/hooks/useSearchQuery";
-// import { useCart } from "@/store/useCart";
-import { Menu, Search, ShoppingCart, UserRound, X } from "lucide-react";
+
+import { Menu, UserRound} from "lucide-react";
 import Link from "next/link";
-// import { usePathname, useRouter } from "next/navigation";
-// import { useState } from "react";
-import {
-  SignInButton,
-  SignedIn,
-  SignedOut,
-  UserButton,
-} from "@clerk/nextjs";
-import { getCart } from "@/lib/fetchers";
+
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
+import { getCart } from "@/lib/cart-actions";
+import ShoppingCartButton from "@/components/ShoppingCartButton";
+import { CartProduct } from "@/lib/types";
 
 const links = [
   { href: "/", label: "Home" },
@@ -22,11 +15,7 @@ const links = [
 ];
 
 async function Header() {
-  // const [isOpen, setIsOpen] = useState(false);
-  // const { basket } = useCart();
-
-  const cart = await getCart();
-  console.log(cart);
+  const cart: CartProduct[] = await getCart();
 
   return (
     <header>
@@ -64,7 +53,7 @@ async function Header() {
             <li className="inline-flex items-center">
               <SignedOut>
                 <SignInButton>
-                  <UserRound className="cursor-pointer"/>
+                  <UserRound className="cursor-pointer" />
                 </SignInButton>
               </SignedOut>
               <SignedIn>
@@ -72,12 +61,7 @@ async function Header() {
               </SignedIn>
             </li>
             <li className="relative">
-              <Link href="/cart" className="gap-2">
-                <ShoppingCart />
-              </Link>
-              <span className="absolute flex justify-center items-center w-5 h-5 -top-2 -right-2 rounded-full bg-black text-white text-[0.8rem]">
-                {cart?.length} 
-              </span>
+              <ShoppingCartButton cart={cart} />
             </li>
           </ul>
           <Button

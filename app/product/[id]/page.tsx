@@ -4,30 +4,12 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import { Product } from "@/lib/types";
-import { useCart } from "@/store/useCart";
-import { pick } from "@/lib/utils";
-import { useToast } from "@/hooks/use-toast";
+import AddItemToCartButton from "@/components/AddItemToCartButton";
 
 function SingleProductPage({ params }: { params: { id: string } }) {
   const [product, setProduct] = useState<Product | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [selectedImage, setSelectedImage] = useState<string | null>();
-
-  const { toast } = useToast();
-  const { addToBasket } = useCart();
-
-  const handleAddToBasket = (product: Product) => {
-    const newProductShape = pick(
-      { ...product, quantity },
-      "name",
-      "image",
-      "price",
-      "stock",
-      "quantity",
-      "id"
-    );
-    addToBasket(product.id, newProductShape, toast);
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -148,13 +130,18 @@ function SingleProductPage({ params }: { params: { id: string } }) {
           </div>
           <div className="flex items-center gap-5 mt-3 h-12">
             <Button className="basis-1/2 h-full">Buy Now</Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="basis-1/2 h-full"
-              onClick={() => handleAddToBasket(product)}
             >
               Add to Cart
-            </Button>
+            </Button> */}
+            <AddItemToCartButton
+              productId={product.id}
+              unitPrice={product.price}
+              quantity={quantity}
+              className="basis-1/2 h-full"
+            />
           </div>
         </div>
       </div>

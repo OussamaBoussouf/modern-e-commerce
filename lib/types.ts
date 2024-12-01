@@ -11,7 +11,17 @@ export type Product = {
 
 export type BasketProduct = Omit<
   Product,
-  "subImages" | "description" | "rating" 
+  "subImages" | "description" | "rating"
 > & {
   quantity: number;
+};
+
+export type CartProduct = {
+  id: string;
+  unitPrice: number;
+  quantity: number;
+  visitorId: string | null;
+  productId: string;
+  userId: string | null;
+  product: Omit<Product, "subImages">;
 };

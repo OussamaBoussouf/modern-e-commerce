@@ -1,23 +1,27 @@
 import { clerkMiddleware } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
-function cookiesMiddleware(request: NextRequest) {
+async function authMiddleware(request: NextRequest) {
   const cookieStore = request.cookies;
-  const sessionCookie = cookieStore.get("visitor_id");
-
+  const sessionCookie = cookieStore.get("visitorId")?.value;
+ 
   const res = NextResponse.next({ request });
 
   if (!sessionCookie) {
-    const visitorToken = uuidv4();
-    res.cookies.set("visitor_id", JSON.stringify(visitorToken), { maxAge: 60 * 60 * 24 });
+    const visitorId = uuidv4();
+    res.cookies.set("visitorId", visitorId, {
+      maxAge: 60 * 60 * 24 * 10,
+    });
   }
 
   return res;
 }
 
 export default clerkMiddleware(async (auth, req) => {
-  return cookiesMiddleware(req);
+  
+    return authMiddleware(req);
+  
 });
 
 export const config = {

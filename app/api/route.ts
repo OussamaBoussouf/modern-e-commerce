@@ -9,11 +9,11 @@ export async function GET(request: NextRequest) {
 
   if (query === "new-arrivals") {
     products = await prisma.product.findMany({
-        orderBy: {
-            createdAt:'desc'
-        },
-        take: 6
-    })
+      orderBy: {
+        createdAt: "desc",
+      },
+      take: 6,
+    });
   } else if (query === "random-products") {
     products = await prisma.product.findMany({
       take: 12,

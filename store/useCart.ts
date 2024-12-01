@@ -2,7 +2,6 @@ import { BasketProduct } from "@/lib/types";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 
-
 type StoreState = {
   basket: BasketProduct[] | [];
 };
@@ -15,7 +14,6 @@ type StoreActions = {
 };
 
 type CartStore = StoreState & StoreActions;
-
 
 //EXCEEDED THE STOCK LIMIT
 const hasExceededStockLimit = (quantity: number, stock: number) => {
@@ -30,7 +28,9 @@ export const useCart = create<CartStore>()(
         set((state) => {
           const newBasket = state.basket;
           console.log(productId);
-          const selectedProduct = newBasket.find(element => element.id === productId);
+          const selectedProduct = newBasket.find(
+            (element) => element.id === productId
+          );
           if (selectedProduct) {
             if (
               hasExceededStockLimit(
@@ -43,7 +43,7 @@ export const useCart = create<CartStore>()(
                 title: "Warning",
                 description: "You cannot exceed the stock limit",
               });
-              return {basket: newBasket};
+              return { basket: newBasket };
             }
 
             selectedProduct.quantity += product.quantity;
@@ -54,8 +54,7 @@ export const useCart = create<CartStore>()(
               description: "Product has been added successfully",
             });
 
-            return {basket: newBasket};
-
+            return { basket: newBasket };
           } else if (hasExceededStockLimit(product.quantity, product.stock)) {
             toast({
               variant: "warning",
@@ -74,22 +73,30 @@ export const useCart = create<CartStore>()(
         }),
       removeProduct: (productId: string) =>
         set((state) => {
-          const newBasket = state.basket.filter(product => product.id != productId) ;
+          const newBasket = state.basket.filter(
+            (product) => product.id != productId
+          );
           return { basket: newBasket };
         }),
       incrementProduct: (productId: string) =>
         set((state) => {
           const newBasket = state.basket;
-          const selectedProduct = newBasket.find(element => element.id === productId);
+          const selectedProduct = newBasket.find(
+            (element) => element.id === productId
+          );
           selectedProduct!.quantity += 1;
-          return {basket: newBasket};
+          return { basket: newBasket };
         }),
       decrementProduct: (productId: string) =>
         set((state) => {
           const newBasket = state.basket;
-          const selectedProduct = newBasket.find(element => element.id === productId);
+          const selectedProduct = newBasket.find(
+            (element) => element.id === productId
+          );
           if (selectedProduct && selectedProduct.quantity === 1) {
-            const filteredBasket = newBasket.filter( element => element.id !== selectedProduct.id);
+            const filteredBasket = newBasket.filter(
+              (element) => element.id !== selectedProduct.id
+            );
             return { basket: filteredBasket };
           }
           selectedProduct!.quantity -= 1;
@@ -98,7 +105,6 @@ export const useCart = create<CartStore>()(
     }),
     {
       name: "basket-storage",
-      storage: createJSONStorage(() => cookiesStorage)
     }
   )
 );

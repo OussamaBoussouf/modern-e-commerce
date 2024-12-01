@@ -7,11 +7,9 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 
-
 import { Product } from "@/lib/types";
 
 async function NewArrivals() {
-  
   const res = await fetch("http://localhost:3000/api?collection=new-arrivals");
   if (!res.ok) throw new Error("Problem occured while fetching Products");
   const { products } = await res.json();
@@ -23,16 +21,11 @@ async function NewArrivals() {
         <Carousel className="w-full">
           <CarouselContent>
             {products.map((product: Omit<Product, "subImages">) => (
-              <CarouselItem key={product.id} className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex items-center justify-center">
-                <Card
-                  image={product.image}
-                  name={product.name}
-                  price={product.price}
-                  rate={product.rating}
-                  id={product.id}
-                  stock={product.stock}
-                  description={product.description}
-                />
+              <CarouselItem
+                key={product.id}
+                className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex items-center justify-center"
+              >
+                <Card props={product} />
               </CarouselItem>
             ))}
           </CarouselContent>
