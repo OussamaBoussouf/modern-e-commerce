@@ -5,9 +5,9 @@ import { Menu, UserRound} from "lucide-react";
 import Link from "next/link";
 
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { getCart } from "@/lib/cart-actions";
 import ShoppingCartButton from "@/components/ShoppingCartButton";
 import { CartProduct } from "@/lib/types";
+import { getProductsInCart } from "@/lib/actions/cart/get-products-in-cart";
 
 const links = [
   { href: "/", label: "Home" },
@@ -15,7 +15,7 @@ const links = [
 ];
 
 async function Header() {
-  const cart: CartProduct[] = await getCart();
+  const cart : CartProduct[] = await getProductsInCart();
 
   return (
     <header>

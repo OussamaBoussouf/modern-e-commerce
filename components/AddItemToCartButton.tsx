@@ -15,14 +15,14 @@ function AddItemToCartButton({
   quantity?: number;
   className: string;
 }) {
-  const addToCartMutation = useAddToCart();
+  const mutation = useAddToCart();
 
   return (
     <Button
       variant="outline"
       className={className}
       onClick={() =>
-        addToCartMutation.mutate({ productId, unitPrice, quantity })
+        mutation.mutate({ productId, unitPrice, quantity })
       }
     >
       Add to Cart

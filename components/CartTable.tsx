@@ -10,7 +10,7 @@ import {
 
 import Image from "next/image";
 import { Button } from "./ui/button";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice } from "@/utils/utils";
 import { CartProduct } from "@/lib/types";
 import RemoveItemFromCart from "./RemoveItemFromCart";
 import { useIncrementOrDecrement } from "@/hooks/cart";

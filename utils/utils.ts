@@ -1,9 +1,6 @@
-
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { BasketProduct, CartProduct } from "./types";
-
-
+import { CartProduct } from "../lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -46,4 +43,4 @@ export function calculateTotal(products: CartProduct[]) {
 
 export const formatPrice = (value: number) => {
   return value.toFixed(2);
-}
+};

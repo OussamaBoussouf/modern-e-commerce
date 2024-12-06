@@ -36,20 +36,15 @@ export async function POST(req: NextRequest) {
       "svix-signature": svix_signature,
     }) as WebhookEvent;
   } catch (error) {
-    console.error("Error: Could ne verify webhook:", error);
+    console.error("Error: Could not verify webhook:", error);
     return new Response("Error: Verification error", { status: 400 });
   }
 
-  const id = evt.data.id as string;
-  const email = evt.data.email_addresses[0]["email_address"];
-
-  console.log(id);
-  console.log(email);
 
   await prisma.user.create({
     data: {
-      id: id,
-      email: email,
+      id: payload?.data?.id,
+      email: payload?.data?.email_addresses?.[0].email_address,
     },
   });
 

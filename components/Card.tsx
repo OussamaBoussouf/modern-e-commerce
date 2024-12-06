@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { summary } from "@/lib/utils";
+import { summary } from "@/utils/utils";
 import AddItemToCartButton from "./AddItemToCartButton";
 
 type CardProps = {

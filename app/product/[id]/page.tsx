@@ -1,72 +1,34 @@
-"use client";
 
-import Image from "next/image";
-import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
-import { Product } from "@/lib/types";
-import AddItemToCartButton from "@/components/AddItemToCartButton";
 
-function SingleProductPage({ params }: { params: { id: string } }) {
-  const [product, setProduct] = useState<Product | null>(null);
-  const [quantity, setQuantity] = useState(1);
-  const [selectedImage, setSelectedImage] = useState<string | null>();
+import ProductImages from "@/components/ProductImages";
+import QuantityManager from "@/components/QuantityManager";
+import prisma from "@/lib/db";
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`/api/product/${params.id}`);
-        const data = await res.json();
-        setProduct(data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+const getProductById = async (id : string) => {
+  const product = await prisma.product.findUnique({
+    where: { id
+    },
+    include: {
+      subImages: true,
+    },
+  });
 
-    fetchData();
-  }, []);
+  return product
+}
+
+async function SingleProductPage({ params }: { params: { id: string } }) {
+
+  const product = await getProductById(params.id);  
 
   if (!product) {
-    return <p>Loading...</p>;
+    return <p>No Product Found</p>;
   }
 
   return (
     <section className="container mx-auto py-10 px-3 ">
       <div className="flex flex-col md:flex-row gap-10">
         <div className="w-full md:max-w-[500px]">
-          <Image
-            src={selectedImage || product?.image}
-            width="400"
-            height="400"
-            alt="headphone"
-            className="bg-gray-100 rounded-lg w-full h-auto"
-          />
-          <div className="flex items-center gap-[1.4%] w-full mt-2">
-            <Image
-              src={product?.image}
-              alt="headphone"
-              width="200"
-              height="200"
-              className={`w-[24%] cursor-pointer h-auto bg-gray-100 rounded-lg ${
-                product?.image === selectedImage ? "border border-gray-500" : ""
-              }`}
-              onClick={() => setSelectedImage(product?.image)}
-            />
-            {product?.subImages?.map((headphone) => (
-              <Image
-                key={headphone.id}
-                src={headphone.image}
-                alt="headphone"
-                width="200"
-                height="200"
-                className={`w-[24%] cursor-pointer h-auto bg-gray-100 rounded-lg ${
-                  headphone.image === selectedImage
-                    ? "border border-gray-500"
-                    : ""
-                }`}
-                onClick={() => setSelectedImage(headphone.image)}
-              />
-            ))}
-          </div>
+          <ProductImages image={product?.image} subImages={product?.subImages}/>
         </div>
         {/* PRODUCT? INFO */}
         <div className="w-full md:flex-grow">
@@ -109,39 +71,8 @@ function SingleProductPage({ params }: { params: { id: string } }) {
               pariatur!
             </p>
           </div>
-          <div className="py-5">
-            <div className="flex items-center gap-5 bg-gray-100 rounded-md p-1 w-fit mb-4">
-              <Button
-                onClick={() => setQuantity((prev) => prev - 1)}
-                disabled={quantity === 1}
-              >
-                -
-              </Button>
-              <span className="w-2 flex items-center justify-center">
-                {quantity}
-              </span>
-              <Button onClick={() => setQuantity((prev) => prev + 1)}>+</Button>
-            </div>
-            <span>
-              Only{" "}
-              <span className="text-orange-400">{product?.stock} Items</span>{" "}
-              Left! Dont miss it
-            </span>
-          </div>
-          <div className="flex items-center gap-5 mt-3 h-12">
-            <Button className="basis-1/2 h-full">Buy Now</Button>
-            {/* <Button
-              variant="outline"
-              className="basis-1/2 h-full"
-            >
-              Add to Cart
-            </Button> */}
-            <AddItemToCartButton
-              productId={product.id}
-              unitPrice={product.price}
-              quantity={quantity}
-              className="basis-1/2 h-full"
-            />
+          <div>
+            <QuantityManager product={product}/>
           </div>
         </div>
       </div>

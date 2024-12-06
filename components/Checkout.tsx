@@ -1,7 +1,7 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { CartProduct } from "@/lib/types";
-import { calculateTotal } from "@/lib/utils";
+import { calculateTotal } from "@/utils/utils";
 
 function Checkout({ cart }: { cart: CartProduct[] }) {
   return (
@@ -13,11 +13,7 @@ function Checkout({ cart }: { cart: CartProduct[] }) {
         <p>Grand total</p>
         <span className="font-bold">${calculateTotal(cart)}</span>
       </div>
-      <Button
-        className="w-full py-6"
-      >
-        Checkout now
-      </Button>
+      <Button className="w-full py-6">Checkout now</Button>
     </div>
   );
 }

@@ -10,6 +10,7 @@ import { CartProduct} from "@/lib/types";
 
 function Cart({cart} : {cart: CartProduct[]}) {
   const { data: productsInCart } = useCart(cart);
+
   const isEmpty = !productsInCart || productsInCart.length === 0;
   
   return (

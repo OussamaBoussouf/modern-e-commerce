@@ -6,13 +6,12 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import { getNewArrivals } from "@/lib/actions/products/get-new-arrivals";
 
 import { Product } from "@/lib/types";
 
 async function NewArrivals() {
-  const res = await fetch("http://localhost:3000/api?collection=new-arrivals");
-  if (!res.ok) throw new Error("Problem occured while fetching Products");
-  const { products } = await res.json();
+  const products = await getNewArrivals();
 
   return (
     <section className="container mx-auto py-10 px-3">

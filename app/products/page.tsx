@@ -1,5 +1,3 @@
-
-
 import Card from "@/components/Card";
 import PaginationComponent from "@/components/Pagination";
 import { Product } from "@/lib/types";
