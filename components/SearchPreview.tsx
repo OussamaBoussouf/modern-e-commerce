@@ -6,20 +6,19 @@ import { useEffect, useState } from "react";
 function SearchPreview({
   searchedValue,
   isVisible,
-  setIsVisible
+  setIsVisible,
 }: {
   searchedValue: string;
   isVisible: boolean;
-  setIsVisible: () => void
+  setIsVisible: () => void;
 }) {
-
-  const [products , setProducts] = useState<Product[] | []>([]);
+  const [products, setProducts] = useState<Product[] | []>([]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const res = await fetch(`/api/products`);
-        const {products} = await res.json();
+        const { products } = await res.json();
         setProducts(products);
       } catch (error) {
         console.log(error);
@@ -29,8 +28,9 @@ function SearchPreview({
     fetchData();
   }, []);
 
-  const filteredProducts : Product[] | [] = products?.filter((product : Product) =>
-    product.name.toLowerCase().includes(searchedValue.toLowerCase())
+  const filteredProducts: Product[] | [] = products?.filter(
+    (product: Product) =>
+      product.name.toLowerCase().includes(searchedValue.toLowerCase())
   );
 
   return (
@@ -44,10 +44,12 @@ function SearchPreview({
       {filteredProducts.length !== 0 ? (
         <ul className="divide-y">
           {filteredProducts.map((product) => (
-            <Link key={product.id} href={`/product/${product.id}`} onClick={setIsVisible}>
-              <li
-                className="py-2 cursor-pointer hover:bg-gray-100"
-              >
+            <Link
+              key={product.id}
+              href={`/product/${product.id}`}
+              onClick={setIsVisible}
+            >
+              <li className="py-2 cursor-pointer hover:bg-gray-100">
                 <div className="flex items-center justify-between px-3 lg:px-6">
                   {/* IMAGE */}
                   <div className="inline-flex items-center w-[280px]">

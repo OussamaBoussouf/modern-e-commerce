@@ -1,9 +1,6 @@
-
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
-import { BasketProduct } from "./types";
-
-
+import { CartProduct } from "../lib/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,7 +11,7 @@ export function delay(time = 1000) {
   return new Promise((resolve) => setTimeout(resolve, time));
 }
 
-//SUBSTRING A LONG TEXT
+//CREATE A SUMMARY FOR LONG TEXT
 export function summary(value: string, length: number) {
   if (value === null) {
     return;
@@ -35,15 +32,15 @@ export function pick(obj: Record<string, any>, ...props: any[]) {
   }, {});
 }
 
-//CALCULATE TOTAL PRICE OF PRODUCT
-export function calculateTotal(products: BasketProduct[]) {
+//CALCULATE TOTAL PRICE OF CART ITEMS
+export function calculateTotal(products: CartProduct[]) {
   let total = 0;
   for (const value of products) {
-    total += value.price * value.quantity;
+    total += value.product.price * value.quantity;
   }
   return total.toFixed(2);
 }
 
 export const formatPrice = (value: number) => {
   return value.toFixed(2);
-}
+};

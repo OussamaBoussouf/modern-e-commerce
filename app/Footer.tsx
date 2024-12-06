@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-black">
+    <footer className="bg-black mt-auto">
       <div className="container mx-auto py-8 px-3 flex flex-col md:flex-row gap-10">
         <div className="max-w-96">
           <svg

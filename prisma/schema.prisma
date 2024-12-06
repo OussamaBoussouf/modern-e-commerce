@@ -23,6 +23,7 @@ model Product {
   stock       Int
   category    String
   subImages   Image[]
+  users       Cart[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }
@@ -32,4 +33,29 @@ model Image {
   image     String
   product   Product @relation(fields: [productId], references: [id])
   productId String
+}
+
+model User {
+  id        String   @id
+  email     String
+  products  Cart[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Cart {
+  id        String   @id @default(cuid())
+  quantity  Int
+  unitPrice Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  visitorId String?
+  product   Product @relation(fields: [productId], references: [id])
+  productId String
+  user      User?   @relation(fields: [userId], references: [id])
+  userId    String?
+
+  @@unique([productId, visitorId])
+  @@unique([productId, userId])
 }

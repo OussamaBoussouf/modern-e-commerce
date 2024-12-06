@@ -19,7 +19,7 @@ function FilterLayout({ children }: { children: React.ReactNode }) {
           <SideBarFilter />
           <div className="w-full">
             <Suspense>
-            {children}
+              {children}
             </Suspense>
           </div>
         </div>
