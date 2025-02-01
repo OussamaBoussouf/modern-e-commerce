@@ -4,16 +4,24 @@ import React from "react";
 
 async function HeroSection() {
   return (
-    <section className="relative container mx-auto rounded-xl py-10 ps-4 md:ps-5 lg:ps-10 w-full h-[400px] lg:h-[500px] bg-cover bg-no-repeat bg-[url('../assets/images/hero-section-mobile.jpg')] lg:bg-[url('../assets/images/hero-section-desktop.jpg')]">
-      <div className="absolute top-1/2 -translate-y-1/2 w-[300px] md:w-[400px] lg:w-[700px]">
-        <h1 className="text-white font-bold text-xl md:text-3xl lg:text-5xl lg:leading-[3.5rem] mb-5">
-          Grab Up to 50% Off On Selected Headphone
-        </h1>
-        <Link href="/products">
-          <Button className="bg-orange-400 hover:bg-orange-500 lg:text-lg lg:py-6 lg:px-7">
-            Buy Now
-          </Button>
-        </Link>
+    <section className="relative w-full h-[400px] lg:h-[500px] 2xl:h-[600px] bg-cover bg-no-repeat bg-[url('../assets/images/headphone-banner-mobile.jpg')] lg:bg-[url('../assets/images/headphone-banner.jpg')]">
+      <div className="bg-gradient-to-r from-black from-50% md:from-20% to-transparent h-full w-full"></div>
+      <div className="container mx-auto">
+        <div className="absolute text-center md:text-left top-1/2 -translate-y-1/2 px-3">
+          <h1 className="text-white font-bold text-3xl lg:text-4xl lg:leading-[3rem] mb-2">
+            Discover Sound <br /> Like Never Before
+          </h1>
+          <p className="text-white max-w-[600px] mb-3 drop-shadow-xl">
+            Discover premium headphones tailored for you. From immersive sound
+            quality to sleek designs, find your perfect match for music, gaming,
+            and more
+          </p>
+          <Link href="/products">
+            <Button className="bg-orange-500 hover:bg-orange-600 rounded-none lg:py-6 lg:px-7">
+              Shop Now
+            </Button>
+          </Link>
+        </div>
       </div>
     </section>
   );
