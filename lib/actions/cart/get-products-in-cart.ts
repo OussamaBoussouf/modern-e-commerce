@@ -3,9 +3,8 @@
 import prisma from "@/lib/db";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
-import { cache } from "react";
 
-export const getProductsInCart = cache(async ()  => {
+export const getProductsInCart = async ()  => {
   try {
     const { userId } = await auth();
     const visitorId = cookies().get("visitorId")?.value;
@@ -27,4 +26,4 @@ export const getProductsInCart = cache(async ()  => {
     console.log(error);
     return error;
   }
-});
+};

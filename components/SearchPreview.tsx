@@ -35,7 +35,7 @@ function SearchPreview({
 
   return (
     <div
-      className={`styled-scrollbar shadow-xl py-5 rounded-lg absolute ${
+      className={`styled-scrollbar shadow-2xl py-5 absolute ${
         isVisible
           ? "top-[110%] opacity-100 visible"
           : "top-[150%] opacity-0 invisible"
@@ -62,33 +62,6 @@ function SearchPreview({
                     />
                     <p className="ms-4 text-sm">{product.name}</p>
                   </div>
-                  {/* RATING */}
-                  <div className="hidden lg:inline-flex lg:items-center gap-1">
-                    <svg
-                      fill="orange"
-                      viewBox="-2 -2 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
-                      preserveAspectRatio="xMinYMin"
-                      className="jam jam-star-full"
-                      stroke="orange"
-                      height="20"
-                      width="20"
-                    >
-                      <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
-                      <g
-                        id="SVGRepo_tracerCarrier"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      ></g>
-                      <g id="SVGRepo_iconCarrier">
-                        <path d="M10 16.207l-6.173 3.246 1.179-6.874L.01 7.71l6.902-1.003L10 .453l3.087 6.254 6.902 1.003-4.995 4.869 1.18 6.874z"></path>
-                      </g>
-                    </svg>
-                    <span>{product.rating}</span>
-                  </div>
-                  <span className="font-semibold text-sm lg:text-base">
-                    ${product.price}
-                  </span>
                 </div>
               </li>
             </Link>

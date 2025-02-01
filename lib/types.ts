@@ -9,19 +9,21 @@ export type Product = {
   subImages: { id: string; image: string; productId: string }[];
 };
 
-export type BasketProduct = Omit<
-  Product,
-  "subImages" | "description" | "rating"
-> & {
-  quantity: number;
-};
-
 export type CartProduct = {
   id: string;
   unitPrice: number;
   quantity: number;
   visitorId: string | null;
-  productId: string;
   userId: string | null;
+  productId: string;
   product: Omit<Product, "subImages">;
+};
+
+export type SingleProduct = {
+  quantity: number;
+  unitPrice: number;
+  name: string;
+  id: string;
+  image: string;
+  stock: number
 };

@@ -1,15 +1,16 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { cache } from "react";
 
-export const getSomeProducts = async (take: number) => {
+export const getSomeProducts = cache(async (take: number) => {
   try {
     const products = await prisma.product.findMany({
       take: take,
     });
-    return products
+    return products;
   } catch (error: any) {
     console.log(error.message);
     throw new Error(error.message);
   }
-};
+});

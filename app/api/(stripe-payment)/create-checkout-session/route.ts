@@ -1,33 +1,58 @@
-import { CartProduct } from "@/lib/types";
+import { CartProduct, SingleProduct } from "@/lib/types";
+import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string);
+import { stripe } from "@/services/stripeService";
 
 export async function POST(req: NextRequest) {
   try {
-    const product = await stripe.products.create({
-      name: "Headphone",
-      images: [
-        "https://res.cloudinary.com/dcdra4coh/image/upload/v1731787301/Shure_SRH1540-2_qpqhzs.png",
-      ],
-    });
+    let session;
+    const selectedProducts: SingleProduct | CartProduct[] = await req.json();
 
-    const price = await stripe.prices.create({
-      product: product.id,
-      unit_amount: 2000,
-      currency: "usd",
-    });
+    const { userId } = await auth();
 
-    const session = await stripe.checkout.sessions.create({
-      line_items: [{ price: price.id, quantity: 1 }],
+    if (!Array.isArray(selectedProducts)) {
+      session = await stripe.checkout.sessions.create({
+        line_items: [
+          {
+            price_data: {
+              currency: "usd",
+              product_data: {
+                name: selectedProducts.name,
+                images: [selectedProducts.image],
+                metadata: { product_id_db: selectedProducts.id, userId },
+              },
+              unit_amount: selectedProducts.unitPrice * 100, // Amount in cents
+            },
+            quantity: selectedProducts.quantity,
+          },
+        ],
+        mode: "payment",
+        success_url: `http://localhost:3000/?session_id={CHECKOUT_SESSION_ID}`,
+        cancel_url: `http://localhost:3000/`,
+      });
+      return NextResponse.json({ url: session.url });
+    }
+
+    session = await stripe.checkout.sessions.create({
+      line_items: selectedProducts.map((product) => ({
+        price_data: {
+          currency: "usd",
+          product_data: {
+            name: product.product.name,
+            images: [product.product.image],
+            metadata: { product_id_db: product.productId, userId },
+          },
+          unit_amount: product.unitPrice * 100, // Amount in cents
+        },
+        quantity: product.quantity,
+      })),
       mode: "payment",
-      success_url: `http://localhost:3000/?success=true`,
-      cancel_url: `http://localhost:3000/cart?canceled=true`,
+      success_url: `http://localhost:3000/?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `http://localhost:3000/`,
     });
     return NextResponse.json({ url: session.url });
   } catch (error: any) {
     console.log(error.message);
-    return NextResponse.json({ error: error.message, status: 500 });
+    return NextResponse.json({ message: error.message, status: 500 });
   }
 }

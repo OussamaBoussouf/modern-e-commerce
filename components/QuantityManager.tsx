@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Product } from "@/lib/types";
 import { Button } from "./ui/button";
@@ -7,6 +7,15 @@ import AddItemToCartButton from "./AddItemToCartButton";
 
 function QuantityManager({ product }: { product: Product }) {
   const [quantity, setQuantity] = useState(1);
+
+  if (product?.stock === 0) {
+    return (
+      <div className="text-center p-3 lg:p-5 border-[4px] border-black rounded-lg mt-8">
+        <span className="font-bold text-lg lg:text-xl">Sorry this product is out of stock</span>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="py-5">
