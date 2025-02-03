@@ -9,7 +9,7 @@ async function ProductList() {
       {products?.map((product: Omit<Product, "subImages">) => (
         <Card key={product.id} props={product} />
       ))}
-    </>
+      </>
   );
 }
 

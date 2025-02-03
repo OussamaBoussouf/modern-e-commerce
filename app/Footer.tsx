@@ -1,8 +1,8 @@
 function Footer() {
   return (
     <footer className="bg-black mt-auto">
-      <div className="container mx-auto py-8 px-3 flex flex-col md:flex-row gap-10">
-        <div className="max-w-96">
+      <div className="container mx-auto py-8 px-3 flex flex-col md:flex-row md:justify-between gap-10 text-white">
+        <div className="max-w-[500px]">
           <svg
             xmlns="http://www.w3.org/2000/svg"
             aria-label="Lucide Store logo"
@@ -14,31 +14,24 @@ function Footer() {
             <path d="M21.5758 9.75769L16 0L0 28H11.6255L21.5758 9.75769Z"></path>
             <path d="M26.2381 17.9167L20.7382 28H32L26.2381 17.9167Z"></path>
           </svg>
-          <p className="text-gray-400">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Distinctio
-            eaque harum dolor cum incidunt corrupti laborum, aut voluptates
-            vitae nihil.
+          <p className="text-gray-200">
+            Experience premium sound with the best headphones. Shop the latest
+            wired and wireless models, enjoy exclusive deals, and immerse
+            yourself in high-quality audio.
           </p>
         </div>
         <div>
-          <p className="text-white mb-3">Customer Care</p>
-          <ul className="text-gray-400 space-y-2">
-            <li>FAQ</li>
-            <li>Shopping</li>
-            <li>Order Status</li>
-            <li>Return & Exchange</li>
-          </ul>
-        </div>
-        <div>
-          <p className="text-white mb-3">Company</p>
-          <ul className="text-slate-400 space-y-2">
+          <ul className="flex items-center gap-5 text-sm">
+            <li>Home</li>
             <li>Privacy</li>
             <li>Guides</li>
             <li>Term of Conditions</li>
           </ul>
         </div>
       </div>
-      <p className="text-slate-400 text-center text-sm py-5">&copy;2024 - All Rights Reserved</p>
+      <p className="text-center text-white text-sm py-5">
+        &copy;2024 - All Rights Reserved
+      </p>
     </footer>
   );
 }

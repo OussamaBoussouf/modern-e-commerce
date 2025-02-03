@@ -16,9 +16,9 @@ type CardProps = {
 
 function Card({ props }: { props: CardProps }) {
   return (
-    <div className="max-w-[350px]">
+    <div className="max-w-[350px] bg-white p-3 shadow-xl rounded-lg">
       {/* IMAGE */}
-      <div className="bg-gray-200 rounded-lg">
+      <div className="bg-slate-100">
         <Link href={`/product/${props.id}`}>
           <Image
             src={props.image}
