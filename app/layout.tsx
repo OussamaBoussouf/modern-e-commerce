@@ -20,7 +20,7 @@ export default function RootLayout({
   return (
     <ClerkProvider>
       <html lang="en">
-        <body className={`${inter.className} antialiased flex flex-col min-h-[100vh]`}>
+        <body className={`${inter.className} antialiased bg-zinc-50 flex flex-col min-h-[100vh]`}>
           <ReactQueryProvider>
             <Header />
             <main>{children}</main>

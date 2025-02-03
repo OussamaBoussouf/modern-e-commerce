@@ -1,8 +1,9 @@
 "use server";
 
 import prisma from "@/lib/db";
+import { cache } from "react";
 
-export const getNewArrivals = async () => {
+export const getNewArrivals = cache(async () => {
   try {
     const products = await prisma.product.findMany({
       orderBy: {
@@ -15,4 +16,4 @@ export const getNewArrivals = async () => {
     console.log(error.message);
     throw new Error(error.message);
   }
-};
+});

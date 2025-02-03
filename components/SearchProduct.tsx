@@ -3,17 +3,12 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Search } from "lucide-react";
 import { memo, useEffect, useRef, useState } from "react";
 import SearchPreview from "./SearchPreview";
-import { useClickOutside } from "@/hooks/useClickOutside";
 
 function SearchProduct() {
   const [searchValue, setSearchValue] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const debouncedSearch = useDebounce(searchValue);
   const previewer = useRef(null);
-
-  useClickOutside(previewer, () => {
-    setIsVisible(false);
-  });
 
   useEffect(() => {
     if (debouncedSearch.length > 0) {
@@ -24,14 +19,15 @@ function SearchProduct() {
   }, [debouncedSearch]);
 
   return (
-    <div ref={previewer} className="relative max-w-[700px] mx-auto">
+    <div ref={previewer} className="relative">
       <input
-        className="bg-slate-200 w-full text-sm rounded-full py-2 ps-4 pe-8"
+        className="bg-slate-200 w-full text-sm rounded-md py-2 ps-4 pe-8"
         type="text"
         placeholder="Search Product"
         name="search"
         value={searchValue}
         onChange={(e) => setSearchValue(e.target.value)}
+        onBlur={() => setIsVisible(false)}
       />
       <Search
         size="15"

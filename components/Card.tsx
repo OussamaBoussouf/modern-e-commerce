@@ -1,8 +1,8 @@
 import Image from "next/image";
-import { Button } from "./ui/button";
 import Link from "next/link";
-import { summary } from "@/utils/utils";
+import { summary } from "@/lib/utils";
 import AddItemToCartButton from "./AddItemToCartButton";
+import BuyNowButton from "./BuyNowButton";
 
 type CardProps = {
   id: string;
@@ -16,9 +16,9 @@ type CardProps = {
 
 function Card({ props }: { props: CardProps }) {
   return (
-    <div className="max-w-[350px]">
+    <div className="max-w-[350px] bg-white p-3 shadow-xl rounded-lg">
       {/* IMAGE */}
-      <div className="bg-gray-200 rounded-lg">
+      <div className="bg-slate-100">
         <Link href={`/product/${props.id}`}>
           <Image
             src={props.image}
@@ -69,7 +69,13 @@ function Card({ props }: { props: CardProps }) {
           unitPrice={props.price}
           className="flex-grow"
         />
-        <Button className="flex-grow">Buy Now</Button>
+        <BuyNowButton
+          image={props.image}
+          name={props.name}
+          stock={props.stock}
+          id={props.id}
+          price={props.price}
+        />
       </div>
     </div>
   );
