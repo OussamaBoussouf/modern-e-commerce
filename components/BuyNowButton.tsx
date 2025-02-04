@@ -10,10 +10,11 @@ type BuyButtonProps = {
   price: number;
   image: string;
   stock: number;
+  
 };
 
-function BuyNowButton({ id, name, price, image, stock }: BuyButtonProps) {
-  //Adher to the shape of CartPorduct type
+function BuyNowButton({ id, name, price, image, stock}: BuyButtonProps) {
+ 
   const product = {
     quantity: 1,
     unitPrice: price,
@@ -28,7 +29,7 @@ function BuyNowButton({ id, name, price, image, stock }: BuyButtonProps) {
   return (
     <Button
       className="flex-grow"
-      disabled={isPending}
+      disabled={isPending }
       onClick={() => handleCheckout()}
     >
       {isPending ? "Processing..." : "Buy Now"}

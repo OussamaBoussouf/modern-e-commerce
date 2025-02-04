@@ -19,7 +19,7 @@ model Product {
   image       String
   price       Float
   description String
-  rating      Int
+  rating      Float
   stock       Int
   category    String
   subImages   Image[]

@@ -3,6 +3,7 @@
 import React from "react";
 import { Button } from "./ui/button";
 import { useAddToCart } from "@/hooks/cart";
+import { Loader } from "lucide-react";
 
 function AddItemToCartButton({
   productId,
@@ -10,6 +11,7 @@ function AddItemToCartButton({
   quantity = 1,
   className,
 }: {
+  
   productId: string;
   unitPrice: number;
   quantity?: number;
@@ -20,13 +22,14 @@ function AddItemToCartButton({
 
   return (
     <Button
+      disabled={mutation.isPending}
       variant="outline"
       className={className}
       onClick={() =>
         mutation.mutate({ productId, unitPrice, quantity })
       }
     >
-      Add to Cart
+      {mutation.isPending ? <Loader className="animate-spin" /> : "Add to Cart"}
     </Button>
   );
 }

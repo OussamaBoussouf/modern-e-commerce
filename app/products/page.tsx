@@ -1,4 +1,4 @@
-import Card from "@/components/Card";
+import ProductCard from "@/components/ProductCard";
 import PaginationComponent from "@/components/Pagination";
 import { Product } from "@/lib/types";
 import { CircleX } from "lucide-react";
@@ -49,7 +49,7 @@ async function ProductsPage({
     <>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
         {products?.map((product: Omit<Product, "subImages">) => (
-          <Card key={product.id} props={product} />
+          <ProductCard key={product.id} props={product} />
         ))}
       </div>
       {pageInfo ? <PaginationComponent pageInfo={pageInfo} /> : null}
