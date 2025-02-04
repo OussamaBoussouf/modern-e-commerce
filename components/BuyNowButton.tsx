@@ -10,10 +10,10 @@ type BuyButtonProps = {
   price: number;
   image: string;
   stock: number;
-  isDisabled: boolean;
+  
 };
 
-function BuyNowButton({ id, name, price, image, stock, isDisabled }: BuyButtonProps) {
+function BuyNowButton({ id, name, price, image, stock}: BuyButtonProps) {
  
   const product = {
     quantity: 1,
@@ -29,7 +29,7 @@ function BuyNowButton({ id, name, price, image, stock, isDisabled }: BuyButtonPr
   return (
     <Button
       className="flex-grow"
-      disabled={isPending || isDisabled}
+      disabled={isPending }
       onClick={() => handleCheckout()}
     >
       {isPending ? "Processing..." : "Buy Now"}

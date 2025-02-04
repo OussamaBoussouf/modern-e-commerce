@@ -10,9 +10,7 @@ function QuantityManager({ product }: { product: Product }) {
 
   if (product?.stock === 0) {
     return (
-      <div className="text-center p-3 lg:p-5 border-[4px] border-black rounded-lg mt-8">
-        <span className="font-bold text-lg lg:text-xl">Sorry this product is out of stock</span>
-      </div>
+      <p className="text-red-600 font-bold mt-5">Currently Out Of Stock</p>
     );
   }
 
