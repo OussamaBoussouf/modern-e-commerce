@@ -1,4 +1,4 @@
-import Card from "@/components/Card";
+import ProductCard from "@/components/ProductCard";
 import {
   Carousel,
   CarouselContent,
@@ -43,7 +43,7 @@ const NewArrivalsCarousel = async () => {
             key={product.id}
             className="sm:basis-1/2 md:basis-1/3 lg:basis-1/4 flex items-center justify-center"
           >
-            <Card props={product} />
+            <ProductCard props={product} />
           </CarouselItem>
         ))}
       </CarouselContent>

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { summary } from "@/lib/utils";
 import AddItemToCartButton from "./AddItemToCartButton";
 import BuyNowButton from "./BuyNowButton";
+import { Badge } from "./ui/badge";
 
 type CardProps = {
   id: string;
@@ -14,11 +15,16 @@ type CardProps = {
   stock: number;
 };
 
-function Card({ props }: { props: CardProps }) {
+function ProductCard({ props }: { props: CardProps }) {
   return (
     <div className="max-w-[350px] bg-white p-3 shadow-xl rounded-lg">
       {/* IMAGE */}
-      <div className="bg-slate-100">
+      <div className="bg-slate-100 relative">
+        {props.stock === 0 && (
+          <Badge variant={"destructive"} className="absolute top-0 left-0">
+            out of stock
+          </Badge>
+        )}
         <Link href={`/product/${props.id}`}>
           <Image
             src={props.image}
@@ -67,9 +73,11 @@ function Card({ props }: { props: CardProps }) {
         <AddItemToCartButton
           productId={props.id}
           unitPrice={props.price}
+          isDisabled={props.stock === 0}
           className="flex-grow"
         />
         <BuyNowButton
+          isDisabled={props.stock === 0}
           image={props.image}
           name={props.name}
           stock={props.stock}
@@ -81,4 +89,4 @@ function Card({ props }: { props: CardProps }) {
   );
 }
 
-export default Card;
+export default ProductCard;
