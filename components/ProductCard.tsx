@@ -86,7 +86,7 @@ function ProductCard({ props }: { props: CardProps }) {
             price={props.price}
           />
         </div>
-      ) : null}
+      ) : <p className="text-red-600 mt-2">Not available in stock</p>}
     </div>
   );
 }

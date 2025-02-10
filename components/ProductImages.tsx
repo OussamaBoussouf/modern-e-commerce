@@ -18,7 +18,6 @@ function ProductImages({ image, subImages }: ProductImagesProps) {
           width="400"
           height="400"
           alt="headphone"
-          // className="bg-gray-100 rounded-lg object-cover h-full"
         />
       </div>
       <div className="w-full flex items-center gap-[2.4%] h-[30%]">
