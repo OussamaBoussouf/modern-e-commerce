@@ -1,17 +1,16 @@
 import { useRemoveFromCart } from "@/hooks/cart";
-import { Trash2 } from "lucide-react";
+import { Trash } from "lucide-react";
 import React from "react";
 
 function RemoveItemFromCart({ productId }: { productId: string }) {
   const deleteProductMutation = useRemoveFromCart();
   return (
     <button
-      className="inline-flex items-center gap-1"
-      type="button"
       onClick={() => deleteProductMutation.mutate(productId)}
+      type="button"
+      className="w-8 h-8 flex items-center justify-center  bg-zinc-200 hover:bg-red-500 hover:text-white rounded-full"
     >
-      <Trash2 size={17} />
-      Remove
+      <Trash size="15" />
     </button>
   );
 }

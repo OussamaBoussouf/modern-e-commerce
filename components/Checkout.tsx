@@ -9,7 +9,7 @@ function Checkout({ cart }: { cart: CartProduct[] }) {
  const {isPending, handleCheckout} = useCheckout(cart);
 
   return (
-    <div className="mt-7 md:mt-16 border border-gray-400 h-auto md:w-1/3 p-3 rounded-lg">
+    <div className="mt-7 md:mt-0 border border-gray-400 h-auto p-3 rounded-lg">
       <div className="border-b-[1px] py-5">
         <p className="text-gray-500">Order summary</p>
       </div>

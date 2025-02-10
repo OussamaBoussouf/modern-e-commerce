@@ -62,7 +62,7 @@ function CartTable({ cart }: { cart: CartProduct[] }) {
                 </span>
                 <Button
                   disabled={product.quantity === product.product.stock}
-                  className="w-1 h-6"
+                  className={`w-1 h-6 bg-red-400`}
                   onClick={() =>
                     incrementOrDecrementMutation.mutate({
                       productId: product.productId,
@@ -75,7 +75,7 @@ function CartTable({ cart }: { cart: CartProduct[] }) {
               </div>
             </TableCell>
             <TableCell className="font-bold text-md w-1/4">
-              ${formatPrice(product.quantity * product.unitPrice)}
+              ${formatPrice(product.quantity * product.unitPrice)} hello world
             </TableCell>
             <TableCell className="text-right font-bold text-md w-1/4">
               <RemoveItemFromCart productId={product.productId} />
