@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { cache } from "react";
 
 export const getSomeProducts = cache(async (take: number) => {

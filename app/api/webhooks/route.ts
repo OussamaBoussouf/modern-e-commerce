@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { WebhookEvent } from "@clerk/nextjs/server";
 import { headers } from "next/headers";
 import { NextRequest } from "next/server";
@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
     console.error("Error: Could not verify webhook:", error);
     return new Response("Error: Verification error", { status: 400 });
   }
-
 
   await prisma.user.create({
     data: {

@@ -25,13 +25,12 @@ function AddItemToCartButton({
       disabled={mutation.isPending}
       variant="outline"
       className={className}
-      onClick={() =>
-        mutation.mutate({ productId, unitPrice, quantity })
-      }
-    >
+      onClick={() => mutation.mutate({ productId, unitPrice, quantity })
+      }>
+      
       {mutation.isPending ? <Loader className="animate-spin" /> : "Add to Cart"}
     </Button>
-  );
+  )
 }
 
 export default AddItemToCartButton;

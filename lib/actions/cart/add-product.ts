@@ -1,6 +1,6 @@
 "use server";
 
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 
@@ -12,47 +12,37 @@ export const addProductToCart = async (product: {
   try {
     const { productId, unitPrice, quantity } = product;
 
-    const visitorId = cookies().get("visitorId")?.value;
     const { userId } = await auth();
 
-    if (!visitorId && !userId)
-      throw new Error(
-        "Unauthorized to perform this action no 'cookie' or 'user_id' has been provided"
-      );
+    
+    const cartId = await getOrCreateCartId();
 
-    if (await hasExccededStockLimit(productId, quantity, userId, visitorId))
-      throw new Error("You can't exceed the stock limit");
+    const exceededStockLimit = await isGreaterThanStockLimit(productId, cartId, quantity);
 
-    //DIFFRENTIATE WHERE TO ADD ITEM BASED ON THE CONNECTED USER
-    const where = userId
-      ? {
-          productId_userId: {
+    if(exceededStockLimit) throw new Error("You can't exceed the stock limit of this product");
+    
+    if (userId) {
+    } else {
+      await prisma.cartProduct.upsert({
+        where: {
+          cartId_productId: {
+            cartId,
             productId,
-            userId,
           },
-        }
-      : {
-          productId_visitorId: {
-            productId,
-            visitorId: visitorId!,
-          },
-        };
-
-    await prisma.cart.upsert({
-      where,
-      update: {
-        quantity: {
-          increment: quantity,
         },
-      },
-      create: {
-        productId,
-        userId: userId || null,
-        visitorId: userId ? null : visitorId,
-        quantity,
-        unitPrice,
-      },
-    });
+        update: {
+          quantity: {
+            increment: quantity,
+          },
+        },
+        create: {
+          productId,
+          cartId,
+          quantity,
+          unitPrice,
+        },
+      });
+    }
 
     return { message: "Product has been added successfully" };
   } catch (error: any) {
@@ -61,49 +51,58 @@ export const addProductToCart = async (product: {
   }
 };
 
-const hasExccededStockLimit = async (
+const getOrCreateCartId = async () => {
+  try {
+    let cartId = cookies().get("cartId")?.value;
+
+    if (!cartId) {
+      const cart = await prisma.cart.create({
+        data: {
+          userId: null,
+        },
+      });
+
+      cookies().set("cartId", cart.id);
+
+      return cart.id;
+    }
+    return cartId;
+  } catch (error) {
+    throw new Error("Something went wrong while creating cartId");
+  }
+};
+
+const isGreaterThanStockLimit = async (
   productId: string,
-  quantity: number,
-  userId: string | null,
-  visitorId: string | undefined
+  cartId: string,
+  quantity: number
 ) => {
-  const productInfo = await prisma.product.findUnique({
+  const productExistInCart = await prisma.cartProduct.findUnique({
+    where: {
+      cartId_productId: {
+        cartId,
+        productId,
+      },
+    },
+  });
+
+  const product = await prisma.product.findUnique({
     where: {
       id: productId,
     },
-    select: {
-      stock: true,
-    },
   });
 
-  if (quantity > productInfo!.stock) {
+  if (!productExistInCart) {
+    if (product && product.stock >= quantity) {
+      return false;
+    }
+
+    return true;
+  } else {
+    if (product && productExistInCart.quantity + quantity <= product.stock) {
+      return false;
+    }
+
     return true;
   }
-
-  const where = userId
-    ? {
-        productId_userId: {
-          productId,
-          userId,
-        },
-      }
-    : {
-        productId_visitorId: {
-          productId,
-          visitorId: visitorId!,
-        },
-      };
-
-  const productExistInCart = await prisma.cart.findUnique({
-    where,
-  });
-
-  if (
-    productExistInCart &&
-    productExistInCart.quantity + quantity > productInfo!.stock
-  ) {
-    return true;
-  }
-
-  return false;
 };

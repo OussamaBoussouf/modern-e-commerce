@@ -78,7 +78,6 @@ function ProductCard({ props }: { props: CardProps }) {
             className="flex-grow"
           />
           <BuyNowButton
-            
             image={props.image}
             name={props.name}
             stock={props.stock}

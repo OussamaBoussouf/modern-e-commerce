@@ -1,7 +1,6 @@
 "use server";
 
-import prisma from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import prisma from "@/services/db/db";
 import { cookies } from "next/headers";
 
 export const manageCartQuantity = async ({
@@ -12,33 +11,26 @@ export const manageCartQuantity = async ({
   productId: string;
 }) => {
   try {
-    const visitorId = cookies().get("visitorId")?.value;
-    const { userId } = await auth();
+    const cartId = cookies().get("cartId")!.value;
 
-    if (!visitorId && !userId)
-      throw new Error(
-        "Unauthorized to perform this action no 'cookie' or 'user_id' has been provided"
-      );
-      
-
-    const where = userId
-      ? {
-          productId_userId: {
-            productId,
-            userId,
-          },
-        }
-      : {
-          productId_visitorId: {
-            productId,
-            visitorId: visitorId!,
-          },
-        };
-
+    const product = await prisma.cartProduct.findUnique({
+      where: {
+        cartId_productId: {
+          productId,
+          cartId,
+        },
+      },
+    });
 
     if (operation === "increment") {
-      await prisma.cart.update({
-        where,
+      //INCREMENT PRODUCT QUANTITY IN CART ----------------
+      await prisma.cartProduct.update({
+        where: {
+          cartId_productId: {
+            productId,
+            cartId,
+          },
+        },
         data: {
           quantity: {
             increment: 1,
@@ -46,28 +38,34 @@ export const manageCartQuantity = async ({
         },
       });
     } else {
-      const product = await prisma.cart.findUnique({
-        where,
-      });
-
-      //REMOVE THE PRODUCT FROM CART WHEN QUANTITY IS BELOW 1
+      //REMOVE PRODUCT FROM CART WHEN IT REACHS ONE --------------
       if (product?.quantity === 1) {
-        await prisma.cart.delete({
-          where,
-        });
-      } else {
-        await prisma.cart.update({
-          where,
-          data: {
-            quantity: {
-              decrement: 1,
+        await prisma.cartProduct.delete({
+          where: {
+            cartId_productId: {
+              productId,
+              cartId,
             },
           },
         });
-      }
-    }
 
-    return { message: "Success" };
+        return;
+      }
+      //DECREMENT PRODUCT QUANTITY IN CART ----------------
+      await prisma.cartProduct.update({
+        where: {
+          cartId_productId: {
+            productId,
+            cartId,
+          },
+        },
+        data: {
+          quantity: {
+            decrement: 1,
+          },
+        },
+      });
+    }
   } catch (error: any) {
     console.log(error);
     throw new Error(error.message);

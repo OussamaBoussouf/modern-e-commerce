@@ -2,8 +2,7 @@ import GoBackButton from "@/components/GoBackButton";
 import ProductImages from "@/components/ProductImages";
 import QuantityManager from "@/components/QuantityManager";
 import Rating from "@/components/Rating";
-import prisma from "@/lib/db";
-
+import prisma from "@/services/db/db";
 
 const getProductById = async (id: string) => {
   const product = await prisma.product.findUnique({
@@ -24,7 +23,7 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
 
   return (
     <section className="container mx-auto py-10 px-3 ">
-      <GoBackButton/>
+      <GoBackButton />
       <div className="flex flex-col md:flex-row gap-10">
         <div className="w-full md:max-w-[500px]">
           <ProductImages

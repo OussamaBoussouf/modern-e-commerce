@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -35,7 +35,7 @@ export async function POST(req: NextRequest) {
     !visitorExistInCart ||
     (visitorExistInCart && userExistInUserTable)
   ) {
-    return new NextResponse(null, {status: 200});
+    return new NextResponse(null, { status: 200 });
   }
 
   await prisma.cart.updateMany({
@@ -48,5 +48,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json("Something went wrong while syncing the user with its cart", {status: 500});
+  return NextResponse.json(
+    "Something went wrong while syncing the user with its cart",
+    { status: 500 }
+  );
 }

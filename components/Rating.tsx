@@ -7,13 +7,13 @@ function Rating({ reviewsLength }: { reviewsLength: number }) {
   return (
     <div className="relative">
       <div className="flex items-center gap-1">
-        {Array.from({ length: 5 }, () => (
-          <Star fill="#111" />
+        {Array.from({ length: 5 }, (_, index) => (
+          <Star key={index} fill="#111" />
         ))}
       </div>
       <div className="absolute top-0 left-0 flex items-center gap-1">
-        {Array.from({ length: reviewsLength }, () => (
-          <Star fill="orange" strokeWidth={0} />
+        {Array.from({ length: reviewsLength }, (_,index) => (
+          <Star key={index} fill="orange" strokeWidth={0} />
         ))}
         {hasHalfStar && <StarHalf fill="orange" strokeWidth={0} />}
       </div>

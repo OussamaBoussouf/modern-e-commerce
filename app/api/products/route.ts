@@ -1,4 +1,4 @@
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { NextRequest, NextResponse } from "next/server";
 
 const RECORD_PER_PAGE = 9;

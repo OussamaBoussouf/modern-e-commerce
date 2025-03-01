@@ -1,29 +1,38 @@
 "use server";
 
-import prisma from "@/lib/db";
+import prisma from "@/services/db/db";
 import { auth } from "@clerk/nextjs/server";
 import { cookies } from "next/headers";
 
-export const getProductsInCart = async ()  => {
+export const getProductsInCart = async () => {
   try {
     const { userId } = await auth();
-    const visitorId = cookies().get("visitorId")?.value;
 
-    const where = { ...(userId ? { userId } : { visitorId }) };
+    const cartId = cookies().get('cartId')?.value;
 
-    const cart = await prisma.cart.findMany({
-      where,
-      include: {
-        product: true,
-      },
-      orderBy: {
-        productId: "desc",
-      },
-    });
+    if(!cartId) return null;
 
-    return cart;
+    if (userId) {
+    } else {
+      const cart = await prisma.cart.findUnique({
+        where: {
+          id: cartId,
+        },
+        include: {
+          products: {
+            include: {
+              product: true,
+            },
+          },
+        },
+      });
+
+      return cart;
+    }
+  
   } catch (error: any) {
     console.log(error);
     return error;
   }
 };
+

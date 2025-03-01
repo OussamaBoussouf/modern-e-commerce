@@ -1,35 +1,20 @@
 "use server";
 
-import prisma from "@/lib/db";
-import { auth } from "@clerk/nextjs/server";
+import prisma from "@/services/db/db";
 import { cookies } from "next/headers";
 
 export const removeProductFromCart = async (productId: string) => {
   try {
-    const visitorId = cookies().get("visitorId")?.value;
-    const { userId } = await auth();
+   
+    const cartId = cookies().get('cartId')!.value;
 
-    if (!visitorId && !userId)
-      throw new Error(
-        "Unauthorized to perform this action no 'cookie' or 'user_id' has been provided"
-      );
-
-    const where = userId
-      ? {
-          productId_userId: {
-            productId,
-            userId,
-          },
-        }
-      : {
-          productId_visitorId: {
-            productId,
-            visitorId: visitorId!,
-          },
-        };
-
-    await prisma.cart.delete({
-      where,
+    await prisma.cartProduct.delete({
+      where: {
+        cartId_productId: {
+          productId,
+          cartId,
+        },
+      }
     });
 
     return { message: "success" };
