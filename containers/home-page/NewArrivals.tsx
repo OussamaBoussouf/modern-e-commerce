@@ -6,7 +6,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
-import { getNewArrivals } from "@/lib/actions/products/get-new-arrivals";
+import { getNewArrivals } from "@/lib/actions/product";
 import { LoaderCircle } from "lucide-react";
 import { Product } from "@/lib/types";
 import { Suspense } from "react";

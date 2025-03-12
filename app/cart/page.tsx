@@ -1,5 +1,5 @@
 import Cart from "@/components/Cart";
-import { getProductsInCart } from "@/lib/actions/cart/get-products-in-cart";
+import { getProductsInCart } from "@/lib/actions/cart";
 
 
 async function CartPage(){

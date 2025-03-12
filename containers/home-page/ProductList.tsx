@@ -1,5 +1,5 @@
 import ProductCard from "@/components/ProductCard";
-import { getSomeProducts } from "@/lib/actions/products/get-some-products";
+import { getSomeProducts } from "@/lib/actions/product";
 import { Product } from "@/lib/types";
 
 async function ProductList() {

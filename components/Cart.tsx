@@ -1,5 +1,5 @@
 "use client";
-import { useCart, useIncrementOrDecrement } from "@/hooks/cart";
+import { useCart} from "@/hooks/cart";
 import React from "react";
 import Checkout from "./Checkout";
 import Image from "next/image";
@@ -8,12 +8,12 @@ import emptyCart from "@/assets/images/empty-cart.png";
 import { CartProduct } from "@/lib/types";
 import { formatPrice } from "@/lib/utils";
 import RemoveItemFromCart from "./RemoveItemFromCart";
+import CartQuantityManager from "./cart/CartQuantityManager";
+
 
 function Cart({ cart }: { cart: CartProduct[] }) {
-  
-  const { data } = useCart(cart);
 
-  const incrementOrDecrementMutation = useIncrementOrDecrement();
+  const { data } = useCart(cart);
 
   if (!data || data.products.length === 0) {
     return (
@@ -43,44 +43,7 @@ function Cart({ cart }: { cart: CartProduct[] }) {
                   alt="headphone"
                 />
               </div>
-              <ul>
-                <li className="font-semibodl">{product.product.name}</li>
-                <li className="flex items-center">
-                  <span className="me-2">Qty:</span>
-                  <div className="flex items-center gap-2 ">
-                    <button
-                      onClick={() =>
-                        incrementOrDecrementMutation.mutate({
-                          productId: product.productId,
-                          operation: "decrement",
-                        })
-                      }
-                      className="active:scale-75 h-5 w-5 flex items-center justify-center bg-black text-white rounded-full hover:cursor-pointer"
-                    >
-                      -
-                    </button>
-                    <span className="w-2 flex items-center justify-center">
-                      {product.quantity}
-                    </span>
-                    <button
-                      disabled={product.quantity === product.product.stock}
-                      onClick={() =>
-                        incrementOrDecrementMutation.mutate({
-                          productId: product.productId,
-                          operation: "increment",
-                        })
-                      }
-                      className={`active:scale-75 h-5 w-5 flex items-center justify-center bg-black text-white rounded-full ${
-                        product.quantity === product.product.stock
-                          ? "bg-gray-300 hover:cursor-not-allowed"
-                          : "bg-black hover:cursor-pointer"
-                      }`}
-                    >
-                      +
-                    </button>
-                  </div>
-                </li>
-              </ul>
+              <CartQuantityManager product={product}/>
             </div>
             <div className="flex flex-col items-end">
               <RemoveItemFromCart productId={product.productId} />

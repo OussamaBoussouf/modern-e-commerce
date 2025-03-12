@@ -1,3 +1,9 @@
+declare global {
+  interface CustomJwtSessionClaims {
+    userMetaData : {cartId: string}
+  }
+}
+
 export type Product = {
   id: string;
   name: string;
@@ -9,14 +15,12 @@ export type Product = {
   subImages: { id: string; image: string; productId: string }[];
 };
 
+
 export type CartProduct = {
-  id: string;
+  cartId: string;
   unitPrice: number;
   quantity: number;
-  visitorId: string | null;
-  userId: string | null;
   productId: string;
-  product: Omit<Product, "subImages">;
 };
 
 export type SingleProduct = {
