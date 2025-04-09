@@ -14,7 +14,7 @@ datasource db {
 }
 
 model Product {
-  id          String   @id @default(cuid())
+  id          String        @id @default(cuid())
   name        String
   image       String
   price       Float
@@ -23,39 +23,44 @@ model Product {
   stock       Int
   category    String
   subImages   Image[]
-  users       Cart[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  carts       CartProduct[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model Image {
-  id        String  @id @default(cuid())
+  id        String   @id @default(cuid())
   image     String
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
   productId String
 }
 
 model User {
   id        String   @id
   email     String
-  products  Cart[]
+  cart      Cart?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model Cart {
-  id        String   @id @default(cuid())
+model CartProduct {
+  cart      Cart     @relation(fields: [cartId], references: [id])
+  cartId    String    
+  product   Product  @relation(fields: [productId], references: [id])
+  productId String  
   quantity  Int
   unitPrice Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  visitorId String?
-  product   Product @relation(fields: [productId], references: [id])
-  productId String
-  user      User?   @relation(fields: [userId], references: [id])
-  userId    String?
+  @@id([cartId, productId])
+}
 
-  @@unique([productId, visitorId])
-  @@unique([productId, userId])
+model Cart {
+  id        String        @id @default(cuid())
+  user      User?          @relation(fields: [userId], references: [id])
+  userId    String?        @unique
+  products  CartProduct[]
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }
