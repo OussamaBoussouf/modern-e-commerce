@@ -1,10 +1,9 @@
-import { useDebounce } from '@/hooks/useDebounce'
+import { useDebounce } from '@/hooks/use-debounce'
 import { Search } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
-import SearchPreview from './SearchPreview'
+import SearchSuggestions from './search-suggestions'
 
-
-function SearchProduct() {
+function SearchBar() {
     const [searchValue, setSearchValue] = useState('')
     const [isVisible, setIsVisible] = useState(false)
     const debouncedSearch = useDebounce(searchValue)
@@ -35,7 +34,7 @@ function SearchProduct() {
                 className='absolute right-3 top-1/2 -translate-y-1/2'
             />
 
-            <SearchPreview
+            <SearchSuggestions
                 searchedValue={debouncedSearch}
                 isVisible={isVisible}
                 setIsVisible={() => setIsVisible(false)}
@@ -44,4 +43,4 @@ function SearchProduct() {
     )
 }
 
-export default SearchProduct
+export default SearchBar

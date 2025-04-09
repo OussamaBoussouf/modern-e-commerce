@@ -4,6 +4,12 @@ import prisma from '@/services/db/db'
 import { auth, clerkClient } from '@clerk/nextjs/server'
 import { cookies } from 'next/headers'
 import { CartProduct } from '../types'
+import {
+    deleteCart,
+    deleteProductFromCart,
+    deleteProductsFromCart,
+    getCartItems,
+} from '../prisma'
 
 export const addProductToCart = async (product: {
     productId: string
@@ -75,14 +81,7 @@ export const removeProductFromCart = async (productId: string) => {
     try {
         const cartId = cookies().get('cartId')!.value
 
-        await prisma.cartProduct.delete({
-            where: {
-                cartId_productId: {
-                    productId,
-                    cartId,
-                },
-            },
-        })
+        await deleteProductFromCart(cartId, productId)
 
         return { message: 'success' }
     } catch (error: any) {
@@ -93,46 +92,14 @@ export const removeProductFromCart = async (productId: string) => {
 
 export const getProductsInCart = async () => {
     try {
-        const { userId } = await auth()
-
         const cartId = cookies().get('cartId')?.value
 
         if (!cartId) return null
 
-        if (userId) {
-            const cart = await prisma.cart.findUnique({
-                where: {
-                    id: cartId,
-                    userId,
-                },
-                include: {
-                    products: {
-                        include: {
-                            product: true,
-                        },
-                    },
-                },
-            })
-            return cart
-        } else {
-            const cart = await prisma.cart.findUnique({
-                where: {
-                    id: cartId,
-                },
-                include: {
-                    products: {
-                        include: {
-                            product: true,
-                        },
-                    },
-                },
-            })
-
-            return cart
-        }
+        return await getCartItems(cartId)
     } catch (error: any) {
         console.error(error)
-        return error
+        throw new Error(error.message)
     }
 }
 
@@ -160,140 +127,96 @@ export const linkCartToUser = async (userId: string, cartId: string) => {
     }
 }
 
-export const mergeTwoCarts = async (
+export const mergeGuestCartWithLoggedInUserCart = async (
     userCartId: string,
     guestCartId: string
 ) => {
-    const anonymousUserItemsInCart = await prisma.cart.findUnique({
-        where: {
-            id: guestCartId,
-        },
-        include: {
-            products: true,
-        },
-    })
-
-    const connectedUserItemsInCart = await prisma.cart.findUnique({
-        where: {
-            id: userCartId,
-        },
-        include: {
-            products: true,
-        },
-    })
+    const [itemsInGuestCart, itemsInLoggedInUserCart] = await Promise.all([
+        await getCartItems(guestCartId),
+        await getCartItems(userCartId),
+    ])
 
     const productsId: Record<string, CartProduct> = {}
 
-    connectedUserItemsInCart?.products.forEach((product) => {
+    itemsInLoggedInUserCart!.products.forEach((product) => {
         productsId[product.productId] = product
     })
 
-    anonymousUserItemsInCart?.products.forEach(
-        async (productInAnonymousCart) => {
-            const productExistInCart =
-                productsId[productInAnonymousCart.productId]
+    for (let i = 0; i < itemsInGuestCart!.products.length; i++) {
+        const product = itemsInGuestCart!.products[i]
+        const productExistInUserCart = productsId[product.productId]
 
-            if (productExistInCart) {
-                const targetedProduct = await prisma.product.findUnique({
-                    where: {
-                        id: productInAnonymousCart.productId,
-                    },
-                })
-
-                const stockLimitExceeded =
-                    productExistInCart.quantity +
-                        productInAnonymousCart.quantity >
-                    targetedProduct!.stock
-
-                await prisma.cartProduct.update({
-                    where: {
-                        cartId_productId: {
-                            cartId: userCartId,
-                            productId: productInAnonymousCart.productId,
-                        },
-                    },
-                    data: {
-                        quantity: stockLimitExceeded
-                            ? targetedProduct!.stock
-                            : {
-                                  increment: productInAnonymousCart.quantity,
-                              },
-                    },
-                })
-            } else {
-                await prisma.cartProduct.create({
-                    data: {
-                        ...productInAnonymousCart,
+        if (productExistInUserCart) {
+            await prisma.cartProduct.update({
+                where: {
+                    cartId_productId: {
                         cartId: userCartId,
+                        productId: productExistInUserCart.productId,
                     },
-                })
-            }
+                },
+                data: {
+                    quantity:
+                        productExistInUserCart.product.stock <
+                        product.quantity + productExistInUserCart.quantity
+                            ? productExistInUserCart.product.stock
+                            : { increment: product.quantity },
+                },
+            })
+        } else {
+            await prisma.cartProduct.update({
+                where: {
+                    cartId_productId: {
+                        cartId: guestCartId,
+                        productId: product.productId,
+                    },
+                },
+                data: {
+                    unitPrice: product.unitPrice,
+                    productId: product.productId,
+                    quantity: product.quantity,
+                    createdAt: product.createdAt,
+                    updatedAt: product.updatedAt,
+                    cartId: userCartId,
+                },
+            })
         }
-    )
+    }
 
-    //
-    const deleteProductsFromGuestCart = prisma.cartProduct.deleteMany({
-        where: {
-            cartId: guestCartId,
-        },
-    })
-    const deleteGuestCart = prisma.cart.delete({
-        where: {
-            id: guestCartId,
-        },
-    })
-    await prisma.$transaction([deleteProductsFromGuestCart, deleteGuestCart])
+    //Delete guest cart along with the products inside it
+    await deleteProductsFromCart(guestCartId)
+    await deleteCart(guestCartId)
 }
 
-export const manageCartQuantity = async ({
-    operation,
-    productId,
-}: {
-    operation: string
-    productId: string
-}) => {
+export const incrementQuantity = async (productId: string, cartId: string) => {
     try {
-        const cartId = cookies().get('cartId')!.value
-
-        const product = await prisma.cartProduct.findUnique({
+        await prisma.cartProduct.update({
             where: {
                 cartId_productId: {
                     productId,
                     cartId,
                 },
             },
+            data: {
+                quantity: {
+                    increment: 1,
+                },
+            },
         })
+    } catch (error: any) {
+        console.log(error)
+        throw new Error(error.message)
+    }
+}
 
-        if (operation === 'increment') {
-            //INCREMENT PRODUCT QUANTITY IN CART ----------------
-            await prisma.cartProduct.update({
-                where: {
-                    cartId_productId: {
-                        productId,
-                        cartId,
-                    },
-                },
-                data: {
-                    quantity: {
-                        increment: 1,
-                    },
-                },
-            })
+export const decrementQuantity = async (
+    productId: string,
+    cartId: string,
+    quantity: number
+) => {
+    try {
+        if (quantity === 1) {
+            await deleteProductFromCart(cartId, productId)
         } else {
-            //REMOVE PRODUCT FROM CART WHEN IT REACHS ONE --------------
-            if (product?.quantity === 1) {
-                await prisma.cartProduct.delete({
-                    where: {
-                        cartId_productId: {
-                            productId,
-                            cartId,
-                        },
-                    },
-                })
-
-                return
-            }
-            //DECREMENT PRODUCT QUANTITY IN CART ----------------
             await prisma.cartProduct.update({
                 where: {
                     cartId_productId: {
@@ -308,6 +231,15 @@ export const manageCartQuantity = async ({
                 },
             })
         }
+    } catch (error: any) {
+        console.log(error)
+        throw new Error(error.message)
+    }
+}
+
+export const clearCart = async (cartId: string) => {
+    try {
+        await deleteProductsFromCart(cartId)
     } catch (error: any) {
         console.log(error)
         throw new Error(error.message)

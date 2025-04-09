@@ -1,9 +1,13 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { toast } from './use-toast'
-import { getProductsInCart } from '@/lib/actions/cart'
+import {
+    decrementQuantity,
+    getProductsInCart,
+    incrementQuantity,
+} from '@/lib/actions/cart'
 import { addProductToCart } from '@/lib/actions/cart'
 import { removeProductFromCart } from '@/lib/actions/cart'
-import { manageCartQuantity } from '@/lib/actions/cart'
+import { CartProduct } from '@prisma/client'
 
 export const useCart = () => {
     return useQuery({
@@ -54,11 +58,38 @@ export const useRemoveFromCart = () => {
     })
 }
 
-export const useIncrementOrDecrement = () => {
+export const useIncrementQty = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn: (product: { productId: string; operation: string }) =>
-            manageCartQuantity(product),
+        mutationFn: ({
+            productId,
+            cartId,
+        }: {
+            productId: string
+            cartId: string
+        }) => incrementQuantity(productId, cartId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['cart'] })
+        },
+        onError: (error) => {
+            toast({
+                title: 'Error',
+                variant: 'destructive',
+                description: error.message,
+            })
+        },
+    })
+}
+
+export const useDecrementQty = () => {
+    const queryClient = useQueryClient()
+    return useMutation({
+        mutationFn: (product: CartProduct) =>
+            decrementQuantity(
+                product.productId,
+                product.cartId,
+                product.quantity
+            ),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['cart'] })
         },

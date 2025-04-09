@@ -2,6 +2,7 @@
 
 import prisma from '@/services/db/db'
 import { cache } from 'react'
+import Stripe from 'stripe'
 
 export const getAllProducts = cache(async () => {
     try {
@@ -39,3 +40,27 @@ export const getSomeProducts = cache(async (take: number) => {
         throw new Error(error.message)
     }
 })
+
+export const updateProductsStockAfterSuccessfulPayment = async(
+    lineItems: Stripe.Response<Stripe.ApiList<Stripe.LineItem>>
+) => {
+    try {
+        for (let i = 0; i < lineItems.data.length; i++) {
+            const item = lineItems.data[i]
+            const productId = item.price?.id
+            await prisma.product.update({
+                where: {
+                    id: productId,
+                },
+                data: {
+                    stock: {
+                        decrement: item.quantity!,
+                    },
+                },
+            })
+        }
+    } catch (error) {
+        console.error(error)
+        throw 'Something went wrong while updating products in DB'
+    }
+}

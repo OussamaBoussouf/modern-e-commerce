@@ -4,7 +4,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-function SearchPreview({
+function SearchSuggestions({
     searchedValue,
     isVisible,
     setIsVisible,
@@ -79,4 +79,4 @@ function SearchPreview({
     )
 }
 
-export default SearchPreview
+export default SearchSuggestions
