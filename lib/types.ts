@@ -12,7 +12,9 @@ export type Product = {
     image: string
     description: string
     stock: number
-    subImages: { id: string; image: string; productId: string }[]
+    subImages?: { id: string; image: string; productId: string }[]
+    createdAt?: Date
+    updatedAt?: Date
 }
 
 export type CartProduct = {

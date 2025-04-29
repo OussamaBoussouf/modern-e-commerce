@@ -1,3 +1,5 @@
+'use client'
+
 import { useRemoveFromCart } from '@/hooks/cart'
 import { Trash } from 'lucide-react'
 import React from 'react'

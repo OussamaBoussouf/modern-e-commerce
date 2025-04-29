@@ -4,6 +4,7 @@ import {
     stripe,
 } from '@/services/payment/stripeService'
 import { updateProductsStockAfterSuccessfulPayment } from '@/lib/actions/product'
+import { Stripe } from 'stripe'
 
 const endpointSecret = process.env.WEBHOOK_SECRET_KEY as string
 
@@ -21,7 +22,7 @@ export async function POST(req: NextRequest) {
     //Read raw body as a buffer
     const body = await req.text()
 
-    let event
+    let event: Stripe.Event
 
     //Check if the request is issued from stripe
     if (endpointSecret) {
@@ -31,32 +32,40 @@ export async function POST(req: NextRequest) {
                 signature,
                 endpointSecret
             )
-        } catch (err: any) {
-            console.log(
-                `⚠️  Webhook signature verification failed.`,
-                err.message
-            )
-            return NextResponse.json({ message: err.message }, { status: 400 })
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                console.log(
+                    `⚠️  Webhook signature verification failed.`,
+                    error.message
+                )
+                return NextResponse.json(
+                    { message: error.message },
+                    { status: 400 }
+                )
+            }
         }
     }
 
-    switch (event?.type) {
+    switch (event!.type) {
         case 'payment_intent.succeeded':
-            const paymentIntentId = event.object.id
+            const paymentIntentId = (event.data.object as Stripe.PaymentIntent)
+                .id
             try {
                 const lineItems = await handleSuccessfulStripePayment(
                     paymentIntentId
                 )
                 await updateProductsStockAfterSuccessfulPayment(lineItems)
-            } catch (error: any) {
-                return NextResponse.json(
-                    { message: error.message },
-                    { status: 500 }
-                )
+            } catch (error: unknown) {
+                if (error instanceof Error) {
+                    return NextResponse.json(
+                        { message: error.message },
+                        { status: 500 }
+                    )
+                }
             }
             break
         default:
-            console.log(`Unhandled event type ${event?.type}.`)
+            console.log(`Unhandled event type ${event!.type}.`)
     }
 
     return NextResponse.json(

@@ -12,6 +12,7 @@ import { useEffect, useState } from 'react'
 import { useSearchQuery } from '@/hooks/use-search-query'
 import { useSearchParams } from 'next/navigation'
 import { useDebounce } from '@/hooks/use-debounce'
+import { getMaxPrice } from '@/lib/actions/product'
 
 const CATEGORIES = [
     {
@@ -38,6 +39,7 @@ function SideBarFilter() {
 
     const selectedCategory = searchParams.get('category') ?? ''
     const [price, setPrice] = useState(searchParams.get('price'))
+    const [maxPrice, setMaxPrice] = useState<number>(0)
     const debouncedPriceValue = useDebounce(price, 500)
 
     useEffect(() => {
@@ -45,6 +47,19 @@ function SideBarFilter() {
             setQueryString('price', price.toString())
         }
     }, [debouncedPriceValue])
+
+    useEffect(() => {
+        const fetch = async () => {
+            try {
+                const max = await getMaxPrice()
+                if (max?._max.price) setMaxPrice(Math.ceil(max?._max.price))
+            } catch (error: unknown) {
+                console.log(error)
+            }
+        }
+
+        fetch()
+    }, [])
 
     return (
         <aside className='md:basis-1/3 lg:basis-1/5 mb-10 lg:mb-0'>
@@ -90,17 +105,17 @@ function SideBarFilter() {
                         Price
                     </AccordionTrigger>
                     <AccordionContent className='my-1'>
-                        <span className='block mb-2'>$0 - ${price ?? 100}</span>
+                        <span className='block mb-2'>
+                            $0 - ${price ?? maxPrice}
+                        </span>
                         <input
                             className='w-full'
                             type='range'
                             min='0'
-                            max={100}
-                            step={5}
-                            value={price ?? 100}
-                            onChange={(e) => {
-                                setPrice(e.target.value)
-                            }}
+                            max={maxPrice ?? 0}
+                            step={1}
+                            value={price ?? maxPrice}
+                            onChange={(e) => setPrice(e.target.value)}
                         />
                     </AccordionContent>
                 </AccordionItem>

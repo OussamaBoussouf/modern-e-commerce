@@ -3,6 +3,18 @@ import Rating from '@/app/product/[id]/_components/rating'
 import ProductImages from '@/components/product/product-sub-images'
 import QuantityManager from '@/app/product/[id]/_components/manage-product-quantity'
 import prisma from '@/services/db/db'
+import { Metadata } from 'next'
+
+type Props = {
+    params: { id: string }
+}
+
+export const generateStaticParams = async () => {
+    const products = await prisma.product.findMany()
+    return products.map((product) => ({
+        id: product.id,
+    }))
+}
 
 const getProductById = async (id: string) => {
     const product = await prisma.product.findUnique({
@@ -15,8 +27,20 @@ const getProductById = async (id: string) => {
     return product
 }
 
-async function SingleProductPage({ params }: { params: { id: string } }) {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
     const product = await getProductById(params.id)
+
+    return {
+        title: product?.name,
+        description: product?.description,
+    }
+}
+
+async function SingleProductPage({ params }: Props) {
+    const { id } = params
+
+    const product = await getProductById(id)
+
     if (!product) {
         return <p>No Product Found</p>
     }
@@ -54,9 +78,9 @@ async function SingleProductPage({ params }: { params: { id: string } }) {
                             Experience superior sound quality with our premium
                             headphones. Designed for comfort and durability,
                             these headphones deliver deep bass, crisp highs, and
-                            immersive audio. Whether you're listening to music,
-                            gaming, or taking calls, enjoy crystal-clear sound
-                            with noise isolation and wireless convenience.
+                            immersive audio. Whether you&apos;re listening to
+                            music, gaming, or taking calls, enjoy crystal-clear
+                            sound with noise isolation and wireless convenience.
                             Elevate your audio experience today!
                         </p>
                     </div>

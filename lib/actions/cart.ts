@@ -71,9 +71,10 @@ export const addProductToCart = async (product: {
         })
 
         return { message: 'Product has been added successfully' }
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error 500')
     }
 }
 
@@ -84,9 +85,11 @@ export const removeProductFromCart = async (productId: string) => {
         await deleteProductFromCart(cartId, productId)
 
         return { message: 'success' }
-    } catch (error: any) {
-        console.log(error)
-        throw new Error(error.message)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error)
+            throw new Error(error.message)
+        }
     }
 }
 
@@ -96,10 +99,13 @@ export const getProductsInCart = async () => {
 
         if (!cartId) return null
 
-        return await getCartItems(cartId)
-    } catch (error: any) {
+        const items = await getCartItems(cartId)
+
+        return items
+    } catch (error: unknown) {
         console.error(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error')
     }
 }
 
@@ -121,9 +127,10 @@ export const linkCartToUser = async (userId: string, cartId: string) => {
                 },
             }),
         ])
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error')
     }
 }
 
@@ -138,6 +145,7 @@ export const mergeGuestCartWithLoggedInUserCart = async (
 
     const productsId: Record<string, CartProduct> = {}
 
+    //BUG: There is a bug here when cart need to be merged
     itemsInLoggedInUserCart!.products.forEach((product) => {
         productsId[product.productId] = product
     })
@@ -202,9 +210,10 @@ export const incrementQuantity = async (productId: string, cartId: string) => {
                 },
             },
         })
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error')
     }
 }
 
@@ -231,25 +240,27 @@ export const decrementQuantity = async (
                 },
             })
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error')
     }
 }
 
 export const clearCart = async (cartId: string) => {
     try {
         await deleteProductsFromCart(cartId)
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.log(error)
-        throw new Error(error.message)
+        if (error instanceof Error) throw new Error(error.message)
+        throw new Error('Server Error')
     }
 }
 
 //HELPER FUNCTIONS -----------------
 const getOrCreateCartId = async () => {
     try {
-        let cartId = cookies().get('cartId')?.value
+        const cartId = cookies().get('cartId')?.value
 
         if (!cartId) {
             const cart = await prisma.cart.create({
@@ -264,6 +275,7 @@ const getOrCreateCartId = async () => {
         }
         return cartId
     } catch (error) {
+        console.log(error)
         throw new Error('Something went wrong while creating cartId')
     }
 }

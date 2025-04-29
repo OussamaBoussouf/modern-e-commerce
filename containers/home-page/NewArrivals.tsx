@@ -35,6 +35,10 @@ export default NewArrivals
 const NewArrivalsCarousel = async () => {
     const products = await getNewArrivals()
 
+    if (!products) {
+        return <h2>We still don&apos;t have any new arrivals yeat</h2>
+    }
+
     return (
         <Carousel className='w-full'>
             <CarouselContent>

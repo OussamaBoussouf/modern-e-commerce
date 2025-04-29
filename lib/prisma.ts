@@ -27,8 +27,8 @@ export const getCartItems = async (cartId: string) => {
                 },
             },
         })
-    } catch (error: any) {
-        throw new Error(error.message)
+    } catch (error: unknown) {
+        if (error instanceof Error) throw new Error(error.message)
     }
 }
 
