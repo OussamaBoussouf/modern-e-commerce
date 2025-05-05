@@ -1,65 +1,18 @@
-'use client'
-
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from '@/components/ui/accordion'
-import { Label } from '@/components/ui/label'
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { useEffect, useState } from 'react'
-import { useSearchQuery } from '@/hooks/use-search-query'
-import { useSearchParams } from 'next/navigation'
-import { useDebounce } from '@/hooks/use-debounce'
+
+import PriceSlider from '@/app/products/_components/price-slider'
+import CategoryPicker from '@/app/products/_components/category-picker'
 import { getMaxPrice } from '@/lib/actions/product'
 
-const CATEGORIES = [
-    {
-        name: 'All',
-        value: '',
-    },
-    {
-        name: 'Wired headphones',
-        value: 'wired',
-    },
-    {
-        name: 'Wireless headphones',
-        value: 'wireless',
-    },
-    {
-        name: 'True wireless earbuds',
-        value: 'earbuds',
-    },
-]
+async function SideBarFilter() {
+    let maxPrice = await getMaxPrice()
 
-function SideBarFilter() {
-    const { setQueryString } = useSearchQuery()
-    const searchParams = useSearchParams()
-
-    const selectedCategory = searchParams.get('category') ?? ''
-    const [price, setPrice] = useState(searchParams.get('price'))
-    const [maxPrice, setMaxPrice] = useState<number>(0)
-    const debouncedPriceValue = useDebounce(price, 500)
-
-    useEffect(() => {
-        if (price) {
-            setQueryString('price', price.toString())
-        }
-    }, [debouncedPriceValue])
-
-    useEffect(() => {
-        const fetch = async () => {
-            try {
-                const max = await getMaxPrice()
-                if (max?._max.price) setMaxPrice(Math.ceil(max?._max.price))
-            } catch (error: unknown) {
-                console.log(error)
-            }
-        }
-
-        fetch()
-    }, [])
+    if (maxPrice) maxPrice = Math.ceil(maxPrice)
 
     return (
         <aside className='md:basis-1/3 lg:basis-1/5 mb-10 lg:mb-0'>
@@ -69,35 +22,7 @@ function SideBarFilter() {
                         Category
                     </AccordionTrigger>
                     <AccordionContent>
-                        <RadioGroup
-                            defaultValue='category'
-                            className='space-y-4 mt-2'
-                        >
-                            {CATEGORIES.map((category) => (
-                                <div
-                                    key={category.name}
-                                    className='flex items-center space-x-2'
-                                >
-                                    <RadioGroupItem
-                                        value={category.value}
-                                        id={category.name}
-                                        checked={
-                                            selectedCategory ==
-                                                category.value && true
-                                        }
-                                        onClick={() =>
-                                            setQueryString(
-                                                'category',
-                                                category.value
-                                            )
-                                        }
-                                    />
-                                    <Label htmlFor={category.name}>
-                                        {category.name}
-                                    </Label>
-                                </div>
-                            ))}
-                        </RadioGroup>
+                        <CategoryPicker />
                     </AccordionContent>
                 </AccordionItem>
                 <AccordionItem value='item-2'>
@@ -105,18 +30,7 @@ function SideBarFilter() {
                         Price
                     </AccordionTrigger>
                     <AccordionContent className='my-1'>
-                        <span className='block mb-2'>
-                            $0 - ${price ?? maxPrice}
-                        </span>
-                        <input
-                            className='w-full'
-                            type='range'
-                            min='0'
-                            max={maxPrice ?? 0}
-                            step={1}
-                            value={price ?? maxPrice}
-                            onChange={(e) => setPrice(e.target.value)}
-                        />
+                        <PriceSlider defaultMaxPrice={maxPrice} />
                     </AccordionContent>
                 </AccordionItem>
             </Accordion>

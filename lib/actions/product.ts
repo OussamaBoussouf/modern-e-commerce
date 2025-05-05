@@ -54,7 +54,8 @@ export const getMaxPrice = async () => {
                 price: true,
             },
         })
-        return maxPrice
+
+        return maxPrice._max.price ?? undefined
     } catch (error: unknown) {
         if (error instanceof Error) {
             console.log(error.message)
