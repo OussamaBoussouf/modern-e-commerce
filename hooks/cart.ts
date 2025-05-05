@@ -7,7 +7,7 @@ import {
 } from '@/lib/actions/cart'
 import { addProductToCart } from '@/lib/actions/cart'
 import { removeProductFromCart } from '@/lib/actions/cart'
-import { CartProduct } from '@prisma/client'
+import { CartProduct } from '@/lib/types'
 
 export const useCart = () => {
     return useQuery({

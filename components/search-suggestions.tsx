@@ -13,7 +13,7 @@ function SearchSuggestions({
     isVisible: boolean
     setIsVisible: () => void
 }) {
-    const [products, setProducts] = useState<any>([])
+    const [products, setProducts] = useState<Product[] | undefined>([])
 
     useEffect(() => {
         const fetchData = async () => {
@@ -28,9 +28,8 @@ function SearchSuggestions({
         fetchData()
     }, [])
 
-    const filteredProducts: Product[] | [] = products?.filter(
-        (product: Product) =>
-            product.name.toLowerCase().includes(searchedValue.toLowerCase())
+    const filteredProducts = products?.filter((product: Product) =>
+        product.name.toLowerCase().includes(searchedValue.toLowerCase())
     )
 
     return (
@@ -41,7 +40,7 @@ function SearchSuggestions({
                     : 'top-[150%] opacity-0 invisible'
             } transition-all duration-800 w-full max-h-60 lg:max-h-96 overflow-auto bg-white z-20`}
         >
-            {filteredProducts.length !== 0 ? (
+            {filteredProducts && filteredProducts.length !== 0 ? (
                 <ul className='divide-y'>
                     {filteredProducts.map((product) => (
                         <Link
@@ -72,7 +71,7 @@ function SearchSuggestions({
             ) : (
                 <p className='px-3 text-sm'>
                     There are no products that match{' '}
-                    <span className='font-bold'>"{searchedValue}"</span>
+                    <span className='font-bold'>{searchedValue}</span>
                 </p>
             )}
         </div>

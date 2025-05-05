@@ -1,4 +1,5 @@
 import SortBy from '@/app/products/_components/sort-by'
+import Skeleton from '@/components/common/skeleton'
 import SideBarFilter from '@/containers/all-products/SideBarFilter'
 import React, { Suspense } from 'react'
 
@@ -15,13 +16,24 @@ function FilterLayout({ children }: { children: React.ReactNode }) {
                     <h2 className='text-xl md:text-3xl font-bold'>
                         Give All You Need
                     </h2>
-                    <SortBy />
+                    <Suspense fallback={<Skeleton />}>
+                        <SortBy />
+                    </Suspense>
                 </div>
                 <div className='flex flex-col md:flex-row gap-x-8 py-10'>
-                    <SideBarFilter />
-                    <div className='w-full'>
-                        <Suspense>{children}</Suspense>
-                    </div>
+                    <Suspense
+                        fallback={
+                            <div className='flex flex-col gap-3'>
+                                <Skeleton />
+                                <Skeleton />
+                            </div>
+                        }
+                    >
+                        <SideBarFilter />
+                    </Suspense>
+                    <Suspense>
+                        <div className='w-full'>{children}</div>
+                    </Suspense>
                 </div>
             </section>
         </>

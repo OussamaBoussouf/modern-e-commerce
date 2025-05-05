@@ -4,14 +4,18 @@ import HeroSection from '@/containers/home-page/HeroSection'
 import NewArrivals from '@/containers/home-page/NewArrivals'
 import NewsLetter from '@/containers/home-page/NewsLetter'
 
-export default function Home() {
+export default function Home({
+    searchParams,
+}: {
+    searchParams: { [key: string]: string | string[] | undefined }
+}) {
     return (
         <>
             <HeroSection />
             <HeadPhonesSection />
             <NewArrivals />
             <NewsLetter />
-            <SuccessfulPurchaseModal />
+            {searchParams.session_id && <SuccessfulPurchaseModal />}
         </>
     )
 }

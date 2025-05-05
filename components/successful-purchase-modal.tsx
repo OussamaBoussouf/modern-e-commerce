@@ -44,18 +44,18 @@ function SuccessfulPurchaseModal() {
             }
         }
         if (sessionId) checkSession()
-    }, [])
+    }, [sessionId])
 
     if (!isModalOpen) return null
 
     return (
         <>
+            <Confetti width={width} height={height} />
             <div
                 ref={ref}
                 onClick={handleClick}
                 className='fixed inset-0 bg-[rgba(0,0,0,0.5)] w-full'
             ></div>
-            <Confetti width={width} height={height} />
             <div className='z-50 p-10 flex flex-col items-center gap-y-5 max-w-96 w-[90%] bg-white rounded-lg text-center shadow-xl fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'>
                 <Image
                     src={checkIcon}
@@ -67,7 +67,10 @@ function SuccessfulPurchaseModal() {
                 <h3 className='font-bold text-2xl'>
                     Thank you for your purchase
                 </h3>
-                <p>We've received your order will ship in 5-7 business days.</p>
+                <p>
+                    We&apos;ve received your order will ship in 5-7 business
+                    days.
+                </p>
                 <Button
                     variant='secondary'
                     className='mt-3'

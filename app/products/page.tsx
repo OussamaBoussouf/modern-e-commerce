@@ -2,6 +2,11 @@ import ProductCard from '@/components/product/product-item'
 import PaginationComponent from '@/components/common/pagination'
 import { Product } from '@/lib/types'
 import { CircleX } from 'lucide-react'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+    title: 'All Products',
+}
 
 async function ProductsPage({
     searchParams,

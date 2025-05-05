@@ -8,9 +8,11 @@ export const getAllProducts = cache(async () => {
     try {
         const products = await prisma.product.findMany()
         return products
-    } catch (error: any) {
-        console.error(error.message)
-        throw new Error(error.message)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.error(error.message)
+            throw new Error(error.message)
+        }
     }
 })
 
@@ -23,9 +25,11 @@ export const getNewArrivals = cache(async () => {
             take: 6,
         })
         return products
-    } catch (error: any) {
-        console.log(error.message)
-        throw new Error(error.message)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+            throw new Error(error.message)
+        }
     }
 })
 
@@ -35,13 +39,31 @@ export const getSomeProducts = cache(async (take: number) => {
             take: take,
         })
         return products
-    } catch (error: any) {
-        console.log(error.message)
-        throw new Error(error.message)
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+            throw new Error(error.message)
+        }
     }
 })
 
-export const updateProductsStockAfterSuccessfulPayment = async(
+export const getMaxPrice = async () => {
+    try {
+        const maxPrice = await prisma.product.aggregate({
+            _max: {
+                price: true,
+            },
+        })
+
+        return maxPrice._max.price ?? undefined
+    } catch (error: unknown) {
+        if (error instanceof Error) {
+            console.log(error.message)
+        }
+    }
+}
+
+export const updateProductsStockAfterSuccessfulPayment = async (
     lineItems: Stripe.Response<Stripe.ApiList<Stripe.LineItem>>
 ) => {
     try {

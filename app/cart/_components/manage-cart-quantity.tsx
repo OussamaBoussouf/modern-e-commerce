@@ -1,7 +1,10 @@
+'use client'
+
 import { useDecrementQty, useIncrementQty } from '@/hooks/cart'
+import { CartProduct } from '@/lib/types'
 import React from 'react'
 
-function ManageCartQuantity({ product }: { product: any }) {
+function ManageCartQuantity({ product }: { product: CartProduct }) {
     const increment = useIncrementQty()
     const decrement = useDecrementQty()
 
