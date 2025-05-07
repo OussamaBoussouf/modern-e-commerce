@@ -26,40 +26,36 @@ const links = [
 ]
 
 function Header() {
-    const queryClient = useQueryClient()
     const { user } = useUser()
 
     useEffect(() => {
-        const setCartId = async () => {
-            try {
-                const guestCartIdExists = Cookies.get('cartId')
-                const loggedInUserCartId = user!.publicMetadata.cartId as
-                    | string
-                    | null
+        if (user) {
+            const setCartId = async () => {
+                try {
+                    const guestCartId = Cookies.get('cartId')
+                    const userCartId = user?.publicMetadata.cartId as
+                        | string
+                        | undefined
 
-                if (guestCartIdExists) {
-                    if (!loggedInUserCartId) {
-                        await linkCartToUser(user!.id, guestCartIdExists)
-                        queryClient.invalidateQueries({ queryKey: ['cart'] })
-                    } else if (guestCartIdExists !== loggedInUserCartId) {
+                    if (guestCartId && !userCartId) {
+                        await linkCartToUser(user!.id, guestCartId)
+                        Cookies.set('cartId', guestCartId)
+                    } else if (guestCartId && userCartId) {
                         await mergeGuestCartWithLoggedInUserCart(
-                            loggedInUserCartId,
-                            guestCartIdExists
+                            userCartId,
+                            guestCartId
                         )
-                        Cookies.set('cartId', loggedInUserCartId)
-                        queryClient.invalidateQueries({ queryKey: ['cart'] })
+                        Cookies.set('cartId', userCartId)
+                    } else if (!guestCartId && userCartId) {
+                        Cookies.set('cartId', userCartId)
                     }
-                } else if (loggedInUserCartId) {
-                    Cookies.set('cartId', loggedInUserCartId)
-                    queryClient.invalidateQueries({ queryKey: ['cart'] })
+                } catch (error) {
+                    console.log(error)
                 }
-            } catch (error) {
-                console.error(error)
             }
+            setCartId()
         }
-
-        if (user) setCartId()
-    }, [user])
+    }, [user?.id])
 
     return (
         <header className='my-2'>

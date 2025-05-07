@@ -109,6 +109,19 @@ export const getProductsInCart = async () => {
     }
 }
 
+export const getUserCart = async (userId: string) => {
+    try {
+        const cartId = await prisma.cart.findUnique({
+            where: {
+                userId: userId,
+            },
+        })
+        return cartId
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export const linkCartToUser = async (userId: string, cartId: string) => {
     try {
         const client = await clerkClient()
@@ -146,7 +159,7 @@ export const mergeGuestCartWithLoggedInUserCart = async (
     const productsId: Record<string, CartProduct> = {}
 
     //BUG: There is a bug here when cart need to be merged
-    itemsInLoggedInUserCart!.products.forEach((product) => {
+    itemsInLoggedInUserCart?.products.forEach((product) => {
         productsId[product.productId] = product
     })
 
