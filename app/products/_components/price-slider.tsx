@@ -22,7 +22,7 @@ function PriceSlider({
     const debouncedPriceValue = useDebounce(price, 500)
 
     useEffect(() => {
-        setQueryString('price', price.toString())
+        setQueryString('price', price)
     }, [debouncedPriceValue])
 
     const handlePriceChange = (e: number[]) => setPrice(e[0])

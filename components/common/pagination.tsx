@@ -45,9 +45,7 @@ function PaginationComponent({
                         onClick={() =>
                             setQueryString(
                                 'page',
-                                pageInfo.previous === 1
-                                    ? ''
-                                    : pageInfo.previous.toString()
+                                pageInfo.previous === 1 ? '' : pageInfo.previous
                             )
                         }
                     />
@@ -65,7 +63,7 @@ function PaginationComponent({
                                 onClick={() =>
                                     setQueryString(
                                         'page',
-                                        page === 1 ? '' : page.toString()
+                                        page === 1 ? '' : page
                                     )
                                 }
                             >
@@ -81,9 +79,7 @@ function PaginationComponent({
                                 ? 'cursor-pointer'
                                 : 'opacity-20 pointer-events-none'
                         }`}
-                        onClick={() =>
-                            setQueryString('page', pageInfo.next.toString())
-                        }
+                        onClick={() => setQueryString('page', pageInfo.next)}
                     />
                 </PaginationItem>
             </PaginationContent>

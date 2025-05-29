@@ -1,27 +1,31 @@
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export const useSearchQuery = () => {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
 
-  const createQueryString = (name: string, value: string) => {
-    const params = new URLSearchParams(searchParams);
+    const createQueryString = (name: string, value: number | string) => {
+        const params = new URLSearchParams(searchParams)
 
-    if (!value) params.delete(name);
-    else params.set(name, value);
+        if (!value) params.delete(name)
+        else
+            params.set(
+                name,
+                typeof value === 'string' ? value : value.toString()
+            )
 
-    if (name === "page") {
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+        if (name === 'page') {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+            })
+        }
+
+        router.replace(`${pathname}?${params}`, {
+            scroll: false,
+        })
     }
-    
-    router.replace(`${pathname}?${params.toString()}`, {
-      scroll: false,
-    });
-  };
 
-  return { setQueryString: createQueryString };
-};
+    return { setQueryString: createQueryString }
+}
