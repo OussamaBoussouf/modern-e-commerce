@@ -30,7 +30,7 @@ export const useCheckout = () => {
             }
 
             const res = await fetch(
-                'http://localhost:3000/api/create-checkout-session',
+                `${process.env.HOST_NAME}/api/create-checkout-session`,
                 {
                     method: 'POST',
                     body: JSON.stringify(products),
